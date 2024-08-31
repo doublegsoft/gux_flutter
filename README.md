@@ -13,9 +13,9 @@ follow the flutter project instruction
 
 ## Screenshot
 
-| 欢迎页 | 首页 |
-|----|----|
-| ![欢迎页](asset/image/screenshot/screenshot-1.png) | ![首页](asset/image/screenshot/screenshot-2.png)         
+| 欢迎页 | 首页 | 编辑表单 |
+|----|----|----|
+| ![欢迎页](asset/image/screenshot/screenshot-1.png) | ![首页](asset/image/screenshot/screenshot-2.png) | ![编辑表单](asset/image/screenshot/screenshot-3.png)         
 
 ## License
  
