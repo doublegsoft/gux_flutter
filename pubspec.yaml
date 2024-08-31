@@ -1,0 +1,39 @@
+name: gux
+description: flutter gux framework
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  intl: ^0.19.0
+  image_picker: ^1.0.0
+  photo_view: ^0.14.0
+  animated_notch_bottom_bar: ^1.0.3
+  table_calendar: ^3.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+  flutter_launcher_icons: ^0.9.2
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - asset/image/
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "asset/image/gux.png"
+
