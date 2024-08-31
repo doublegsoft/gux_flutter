@@ -86,7 +86,7 @@ class TwoColumnFormState extends State<TwoColumnForm> {
     List<Widget> ret = [];
     widget.fields.forEach((field) {
       Padding padding = Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -96,7 +96,7 @@ class TwoColumnFormState extends State<TwoColumnForm> {
                 padding: EdgeInsets.only(top: 12,),
                 child: Text(
                 (field["title"] as String) + "：",
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 16),
                 textAlign: TextAlign.left,
               ),),
             ),
@@ -116,7 +116,7 @@ class TwoColumnFormState extends State<TwoColumnForm> {
       return TextField(
         controller: _controllers[field["name"]],
         focusNode: AlwaysDisabledFocusNode(),
-        style: TextStyle(fontSize: 18),
+        style: TextStyle(fontSize: 16),
         onTap: () {
           selectDate(context, field["name"]);
         },
@@ -137,11 +137,11 @@ class TwoColumnFormState extends State<TwoColumnForm> {
           child: Text(single["text"] as String),
         )).toList(),
         style: TextStyle(
-          fontSize: 18,
+          fontSize: 16,
           color: Colors.black,
         ),
         decoration: InputDecoration(
-          hintStyle: TextStyle(fontSize: 18),
+          hintStyle: TextStyle(fontSize: 16),
           hintText: '请选择...',
           contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
         ),
@@ -158,7 +158,7 @@ class TwoColumnFormState extends State<TwoColumnForm> {
               });
             },
           ),
-          Text(field["title"], style: TextStyle(fontSize: 18),),
+          Text(field["title"], style: TextStyle(fontSize: 16),),
         ],
       );
     } else if (field["input"] == "radio") {
@@ -185,7 +185,7 @@ class TwoColumnFormState extends State<TwoColumnForm> {
     } else {
       return TextField(
         controller: _controllers[field["name"]],
-        style: TextStyle(fontSize: 18),
+        style: TextStyle(fontSize: 16),
         decoration: InputDecoration(
           hintText: '请填写',
           contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
@@ -321,6 +321,7 @@ class TwoColumnFormState extends State<TwoColumnForm> {
     String name = field["name"];
     List<dynamic> images = _values[name] ?? [];
     return Container(
+      padding: EdgeInsets.only(top: 10),
       height: 96 * ((images.length / 3).toInt() + 1) + (images.length / 3).toInt() * 4,
       child: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -392,9 +393,12 @@ class TwoColumnFormState extends State<TwoColumnForm> {
     for (int i = 0; i < values.length; i++) {
       items.add(buildWidgetForSegmentItem(name, values[i]["value"], values[i]["text"], i, values.length));
     }
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: items,
+    return Container(
+      padding: EdgeInsets.only(top: 6),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: items,
+      ),
     );
   }
 
@@ -406,7 +410,7 @@ class TwoColumnFormState extends State<TwoColumnForm> {
         });
       },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+        padding: EdgeInsets.all(0),
         decoration: BoxDecoration(
           color: Colors.transparent,
           border: Border(
@@ -435,7 +439,7 @@ class TwoColumnFormState extends State<TwoColumnForm> {
         child: Row(
           children: [
             Container(
-              height: 42,
+              height: 32,
               width: 64,
               color: (_values[name] == value) ? Colors.blue : Colors.transparent,
               child: Center(

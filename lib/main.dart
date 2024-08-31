@@ -1,3 +1,18 @@
+/*
+** ──────────────────────────────────────────────────
+** ─██████████████─██████──██████─████████──████████─
+** ─██░░░░░░░░░░██─██░░██──██░░██─██░░░░██──██░░░░██─
+** ─██░░██████████─██░░██──██░░██─████░░██──██░░████─
+** ─██░░██─────────██░░██──██░░██───██░░░░██░░░░██───
+** ─██░░██─────────██░░██──██░░██───████░░░░░░████───
+** ─██░░██──██████─██░░██──██░░██─────██░░░░░░██─────
+** ─██░░██──██░░██─██░░██──██░░██───████░░░░░░████───
+** ─██░░██──██░░██─██░░██──██░░██───██░░░░██░░░░██───
+** ─██░░██████░░██─██░░██████░░██─████░░██──██░░████─
+** ─██░░░░░░░░░░██─██░░░░░░░░░░██─██░░░░██──██░░░░██─
+** ─██████████████─██████████████─████████──████████─
+** ──────────────────────────────────────────────────
+*/
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -33,12 +48,13 @@ class MainPage extends StatelessWidget {
       canPop: false,
       child: Scaffold(
         extendBodyBehindAppBar: false, // Extends the body behind the AppBar
-        appBar: AppBar(
-          title: Text('GUX'),
-          backgroundColor: Colors.transparent, // Makes the AppBar transparent
-          elevation: 0, // Removes shadow/elevation
-          automaticallyImplyLeading: false,
-        ),
+        appBar: null,
+        // AppBar(
+        //   title: Text('GUX'),
+        //   backgroundColor: Colors.transparent, // Makes the AppBar transparent
+        //   elevation: 0, // Removes shadow/elevation
+        //   automaticallyImplyLeading: false,
+        // ),
         bottomNavigationBar: AnimatedNotchBottomBar(
           /// Provide NotchBottomBarController
           notchBottomBarController: _controller,
@@ -60,33 +76,50 @@ class MainPage extends StatelessWidget {
           elevation: 1,
           bottomBarItems: const [
             BottomBarItem(
-              inActiveItem: Icon(
-                Icons.home_filled,
-                color: Colors.blueGrey,
-              ),
-              activeItem: Icon(
-                Icons.home_filled,
+              inActiveItem: ImageIcon(
+                AssetImage('asset/image/widget.png'),
+                size: 24.0,
                 color: Colors.blueAccent,
+              ),
+              activeItem: ImageIcon(
+                AssetImage('asset/image/widget.png'),
+                size: 24.0,
+                color: Colors.white,
               ),
               itemLabel: '组件',
             ),
             BottomBarItem(
-              inActiveItem: Icon(Icons.star, color: Colors.blueGrey),
-              activeItem: Icon(
-                Icons.star,
+              inActiveItem: ImageIcon(
+                AssetImage('asset/image/page.png'),
+                size: 24.0,
                 color: Colors.blueAccent,
+              ),
+              activeItem: ImageIcon(
+                AssetImage('asset/image/page.png'),
+                size: 24.0,
+                color: Colors.white,
               ),
               itemLabel: '页面',
             ),
             BottomBarItem(
-              inActiveItem: Icon(
-                Icons.person,
-                color: Colors.blueGrey,
+              inActiveItem: ImageIcon(
+                AssetImage('asset/image/app.png'),
+                size: 24.0,
+                color: Colors.blueAccent,
               ),
-              activeItem: Icon(
-                Icons.person,
-                color: Colors.yellow,
+              activeItem: ImageIcon(
+                AssetImage('asset/image/app.png'),
+                size: 24.0,
+                color: Colors.white,
               ),
+              // inActiveItem: Icon(
+              //   Icons.person,
+              //   color: Colors.blueGrey,
+              // ),
+              // activeItem: Icon(
+              //   Icons.person,
+              //   color: Colors.yellow,
+              // ),
               itemLabel: '探索',
             ),
           ],
