@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
+import '/gux/page/grid_view_page.dart';
 import '/gux/page/calendar_page.dart';
 import '/gux/page/two_column_form_page.dart';
 
@@ -11,19 +12,18 @@ class WidgetScreen extends StatelessWidget {
       child: Column(
         children: [
           CarouselSlider(
-            options: CarouselOptions(height: 240.0),
+            options: CarouselOptions(
+              height: 240.0,
+              viewportFraction: 1.0,
+            ),
             items: [1,2,3,4,5].map((i) {
               return Builder(
                 builder: (BuildContext context) {
                   return Container(
                     width: MediaQuery.of(context).size.width,
-                    margin: EdgeInsets.symmetric(horizontal: 0.0),
-                      // decoration: BoxDecoration(
-                      //     color: Colors.amber
-                      // ),
-                      // child: Text('text $i', style: TextStyle(fontSize: 16.0),)
+                    height: 240,
                     child: FittedBox(
-                      fit: BoxFit.cover, // Ensure the image covers the parent container
+                      fit: BoxFit.fill,
                       child: Image.network('https://picsum.photos/600/300'),
                     ),
                   );
@@ -67,6 +67,9 @@ class WidgetScreen extends StatelessWidget {
             description: '栅格列表以卡片的形式双列竖式展示集合内容，是应用程序最为常用的集合内容展现部件。',
             imagePath: 'asset/image/widget/grid_view.png',
             onPressed: () {
+              Navigator.push(context,
+                MaterialPageRoute(builder: (context) => GridViewPage()),
+              );
             },
           ),
           buildCard4Widget(
@@ -75,8 +78,7 @@ class WidgetScreen extends StatelessWidget {
             description: '日历导航是以日期为分类类别的选择部件，通过日期的选择来触发下方集合内容的改变。',
             imagePath: 'asset/image/widget/calendar.png',
             onPressed: () {
-              Navigator.push(
-                context,
+              Navigator.push(context,
                 MaterialPageRoute(builder: (context) => CalendarPage()),
               );
             },
@@ -126,7 +128,7 @@ class WidgetScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 8.0),
                   Text(
-                    description,
+                    '       ' + description,
                     style: TextStyle(
                       fontSize: 16.0,
                     ),

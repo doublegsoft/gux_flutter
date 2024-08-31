@@ -14,89 +14,25 @@
 ** ──────────────────────────────────────────────────
 */
 import 'package:flutter/material.dart';
-import 'package:gux/widget/gx_two_column_form.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:table_calendar/table_calendar.dart';
 
-import '/styles.dart' as styles;
+import 'package:gux/widget/gx_grid_view.dart';
 
-class TwoColumnFormPage extends StatefulWidget {
+class GridViewPage extends StatefulWidget {
   @override
-  TwoColumnFormPageState createState() => TwoColumnFormPageState();
+  GridViewState createState() => GridViewState();
 }
 
-class TwoColumnFormPageState extends State<TwoColumnFormPage> {
+class GridViewState extends State<GridViewPage> {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('编辑表单'),
+        title: Text('栅格列表'),
       ),
-      body: SingleChildScrollView(
-        child: styles.buildCard(
-          title: '基本信息',
-          child: GXTwoColumnForm(
-            fields: getFields(),
-          ),
-        ),
-      )
-
+      body: GXGridView(),
     );
-  }
-
-  List<Map<String, dynamic>> getFields() {
-    List<Map<String, dynamic>> ret = [];
-    Map<String,dynamic> field = {};
-    field["title"] = "姓名";
-    field["name"] = "name";
-    field["input"] = "text";
-    ret.add(field);
-
-    field = {};
-    field["title"] = "手机";
-    field["name"] = "mobile";
-    field["input"] = "text";
-    ret.add(field);
-
-    field = {};
-    field["title"] = "性别";
-    field["name"] = "gender";
-    field["input"] = "segment";
-    field["options"] = {
-      "values": [{
-        "text": "男", "value": "男"
-      }, {
-        "text": "女", "value": "女"
-      }]
-    };
-    ret.add(field);
-
-    field = {};
-    field["title"] = "出生日期";
-    field["name"] = "birthdate";
-    field["input"] = "date";
-    ret.add(field);
-
-    field = {};
-    field["title"] = "宠物";
-    field["name"] = "pet";
-    field["input"] = "select";
-    field["options"] = {
-      "values": [{
-        "text": "阿猫", "value": "A"
-      }, {
-        "text": "阿狗", "value": "B"
-      }, {
-        "text": "恐龙", "value": "C"
-      }]
-    };
-    ret.add(field);
-
-    field = {};
-    field["title"] = "照片";
-    field["name"] = "images";
-    field["input"] = "images";
-    ret.add(field);
-
-    return ret;
   }
 }

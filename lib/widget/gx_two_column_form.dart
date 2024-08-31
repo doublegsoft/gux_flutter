@@ -26,13 +26,13 @@ class AlwaysDisabledFocusNode extends FocusNode {
   bool get hasFocus => false;
 }
 
-class TwoColumnForm extends StatefulWidget {
+class GXTwoColumnForm extends StatefulWidget {
 
   final bool readonly;
   final int labelWidth;
   final List<Map<String, dynamic>> fields;
 
-  const TwoColumnForm({
+  const GXTwoColumnForm({
     Key? key,
     required this.fields,
     this.readonly = false,
@@ -40,10 +40,10 @@ class TwoColumnForm extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => TwoColumnFormState();
+  State<StatefulWidget> createState() => GXTwoColumnFormState();
 }
 
-class TwoColumnFormState extends State<TwoColumnForm> {
+class GXTwoColumnFormState extends State<GXTwoColumnForm> {
 
   final Map<String, dynamic> _values = {};
 
