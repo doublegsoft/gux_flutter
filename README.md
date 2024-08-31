@@ -8,13 +8,7 @@ To learn more information about GUX framework please see other GUX projects for 
 ## Project Layout
 
 ```md
-gux-cocoatouch-objectivec
-├── Sources (the source code from example project)
-├── Vendors (the thirdparty framework source code include GUX)
-│   ├── GUX (the source code for GUX framework)
-│   └── ...
-├── Others (the other project files and document files)
-└── gux-cocoatouch-objectivec.xcodeproj (the xcode project file)
+follow the flutter project instruction
 ```
 
 ## Screenshot
