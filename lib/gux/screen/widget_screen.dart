@@ -1,9 +1,12 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
+import '/gux/page/common_page.dart';
 import '/gux/page/grid_view_page.dart';
 import '/gux/page/calendar_page.dart';
 import '/gux/page/two_column_form_page.dart';
+
+import '../sdk.dart' as sdk;
 
 class WidgetScreen extends StatelessWidget {
   @override
@@ -11,27 +14,89 @@ class WidgetScreen extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          CarouselSlider(
-            options: CarouselOptions(
-              height: 240.0,
-              viewportFraction: 1.0,
-            ),
-            items: [1,2,3,4,5].map((i) {
-              return Builder(
-                builder: (BuildContext context) {
-                  return Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: 240,
-                    child: FittedBox(
-                      fit: BoxFit.fill,
-                      child: Image.network('https://picsum.photos/600/300'),
-                    ),
-                  );
-                },
+          FutureBuilder(
+            future: sdk.fetchApplicationAdvertisements({}),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasData) {
+                return CarouselSlider(
+                  options: CarouselOptions(
+                    height: 240.0,
+                    viewportFraction: 1.0,
+                    autoPlay: true,
+                  ),
+                  items: snapshot.data!.map((item) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 240,
+                          child: FittedBox(
+                            fit: BoxFit.fill,
+                            child: Image.network(item['imagePath']),
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+                );
+              }
+              return Container(
+                height: 240,
               );
-            }).toList(),
+            },
           ),
           SizedBox(height: 8),
+          FutureBuilder(
+            future: sdk.fetchApplicationNotifications({}),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasData) {
+                return Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 16),
+                      child: Text(
+                        '\ue612',
+                        style: TextStyle(
+                          fontFamily: 'gx-iconfont',
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+
+                    Expanded(
+                      child: CarouselSlider(
+                        options: CarouselOptions(
+                          scrollDirection: Axis.vertical,
+                          height: 20.0,
+                          viewportFraction: 1.0,
+                          autoPlay: true,
+                        ),
+                        items: snapshot.data!.map((item) {
+                          return Builder(
+                            builder: (BuildContext context) {
+                              return Container(
+                                height: 20,
+                                padding: EdgeInsets.only(left: 8, right: 16),
+                                child: Text(item["content"]),
+                              );
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                );
+              }
+              return Container(
+                height: 20,
+              );
+            },
+          ),
           buildCard4Widget(
             context: context,
             title: '编辑表单',
@@ -90,6 +155,18 @@ class WidgetScreen extends StatelessWidget {
             imagePath: 'asset/image/widget/tabs.png',
             onPressed: () {
 
+            },
+          ),
+          buildCard4Widget(
+            context: context,
+            title: '通用页面',
+            description: '通用页面适用于各种应用程序，在能够满足不同应用程序的个性化需求情况下很少变动的页面。',
+            imagePath: 'asset/image/widget/common_page.png',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CommonPage()),
+              );
             },
           ),
         ],

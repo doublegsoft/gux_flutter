@@ -31,7 +31,11 @@ class GUX extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: WelcomeScreen(),
+      // home: WelcomeScreen(),
+      routes: {
+        '/': (conetxt) => WelcomePage(),
+        '/main': (context) => MainPage(),
+      },
     );
   }
 }

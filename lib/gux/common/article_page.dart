@@ -14,54 +14,46 @@
 ** ──────────────────────────────────────────────────
 */
 import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
-import '/main.dart';
+class ArticlePage extends StatefulWidget {
+  @override
+  ArticlePageState createState() => ArticlePageState();
+}
 
-class WelcomePage extends StatelessWidget {
+class ArticlePageState extends State<ArticlePage> {
+
+  late WebViewController _controller;
+
   @override
   Widget build(BuildContext context) {
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onProgress: (int progress) {
+            // Update loading bar.
+          },
+          onPageStarted: (String url) {},
+          onPageFinished: (String url) {},
+          onHttpError: (HttpResponseError error) {},
+          onWebResourceError: (WebResourceError error) {},
+          onNavigationRequest: (NavigationRequest request) {
+            if (request.url.startsWith('https://www.youtube.com/')) {
+              return NavigationDecision.prevent;
+            }
+            return NavigationDecision.navigate;
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse('https://flutter.dev'));
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.lightBlueAccent.withOpacity(0.2), Colors.lightBlueAccent.withOpacity(0.8)],
-          ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Image.asset("asset/image/banner.png", width: 1280 / 4, height: 883 / 4,),
-              SizedBox(height: 20.0),
-              Text(
-                '欢迎使用GUX',
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              SizedBox(height: 20.0),
-              Text(
-                'GUX是一款Flutter的扩展应用框架',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: Colors.white,
-                ),
-              ),
-              SizedBox(height: 40.0),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/main',);
-                },
-                child: Text('开始使用'),
-              ),
-            ],
-          ),
-        ),
+      appBar: AppBar(
+        title: Text('文章浏览'),
       ),
+      body: WebViewWidget(
+        controller: _controller,
+      )
     );
   }
 }

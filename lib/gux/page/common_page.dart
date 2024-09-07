@@ -20,70 +20,70 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:gux/widget/gx_grid_view.dart';
 import 'package:gux/widget/gx_widget_size.dart';
 
-class GridViewPage extends StatefulWidget {
+import '/gux/common/article_page.dart';
+import '/gux/common/failure_page.dart';
+import '/gux/common/success_page.dart';
+import '/styles.dart' as styles;
+
+class CommonPage extends StatefulWidget {
   @override
-  GridViewState createState() => GridViewState();
+  CommonState createState() => CommonState();
 }
 
-class GridViewState extends State<GridViewPage> {
-
-  List<Map<String, dynamic>> data = [{},{},{}];
+class CommonState extends State<CommonPage> {
 
   @override
   Widget build(BuildContext context) {
-    data = [{},{},{},{},{},{},{}];
     return Scaffold(
       appBar: AppBar(
-        title: Text('栅格列表'),
+        title: Text('通用页面'),
       ),
-      body: GXGridView(
-        data: data,
-        itemBuilder: (context, item, columnIndex) {
-          return _buildCard(columnIndex);
-        },
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            ListTile(
+              title: Text('操作成功', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              trailing: Text('\ue665', style: TextStyle(fontFamily: 'gx-iconfont', fontSize: 18, fontWeight: FontWeight.bold)),
+              onTap: () {
+                Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => SuccessPage()),
+                );
+              },
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: styles.padding, right: styles.padding),
+              child: Divider(),
+            ),
+            ListTile(
+              title: Text('操作失败', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              trailing: Text('\ue665', style: TextStyle(fontFamily: 'gx-iconfont', fontSize: 18, fontWeight: FontWeight.bold)),
+              onTap: () {
+                Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => FailurePage()),
+                );
+              },
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: styles.padding, right: styles.padding),
+              child: Divider(),
+            ),
+            ListTile(
+              title: Text('文章浏览', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              trailing: Text('\ue665', style: TextStyle(fontFamily: 'gx-iconfont', fontSize: 18, fontWeight: FontWeight.bold)),
+              onTap: () {
+                Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ArticlePage()),
+                );
+              },
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: styles.padding, right: styles.padding),
+              child: Divider(),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  GXWidgetSize _buildCard(int columnIndex) {
-    return GXWidgetSize(
-      child: Container(
-        padding: EdgeInsets.only(bottom: 8.0),
-        height: columnIndex == 0 ? 220 : 320,
-        color: Color.fromRGBO(234,234,234,1),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: 160,
-              child: FittedBox(
-                fit: BoxFit.fill,
-                child: Image.network('https://picsum.photos/300/160'),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 16, right: 16, top: 8,),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("hello", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text("world", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                ]
-              )
-            ),
-            (columnIndex == 0 ? Container() : Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical:0,horizontal:16),
-                  child: Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry. when an unknown printer took a galley of type and scrambled it to make a type specimen book.", style: TextStyle(fontSize: 12)),
-                ),
-              )
-            ),
-          ]
-        )
-      ),
-      height: columnIndex == 0 ? 220 : 320,
-      onChange: (size) {},
-    );
-  }
 }

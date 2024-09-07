@@ -122,7 +122,7 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
         },
         decoration: InputDecoration(
           hintText: '请选择...',
-          contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
+          contentPadding: EdgeInsets.only(left: 16, right: 16, bottom: 4),
         ),
       );
     } else if (field["input"] == "select") {
@@ -143,7 +143,7 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
         decoration: InputDecoration(
           hintStyle: TextStyle(fontSize: 16),
           hintText: '请选择...',
-          contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
+          contentPadding: EdgeInsets.only(left: 16, right: 16, bottom: 4),
         ),
       );
     } else if (field["input"] == "check") {
@@ -248,7 +248,7 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
           children: <Widget>[
             ListTile(
               leading: Icon(Icons.photo_library),
-              title: Text('Gallery'),
+              title: Text('相册'),
               onTap: () {
                 Navigator.of(context).pop();
                 pickImage(ImageSource.gallery, name);
@@ -256,7 +256,7 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
             ),
             ListTile(
               leading: Icon(Icons.camera_alt),
-              title: Text('Camera'),
+              title: Text('相机'),
               onTap: () {
                 Navigator.of(context).pop();
                 pickImage(ImageSource.camera, name);
@@ -301,7 +301,7 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: Text('Close'),
+                    child: Text('关闭'),
                   ),
                 ),
               ],
@@ -346,15 +346,19 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
                     width: 2.0,
                   ),
                 ),
-                child: Center(
-                  child: Text(
-                    "+",
-                    style: TextStyle(
-                      fontSize: 48.0,
-                      color: Colors.black26,
-                      fontWeight: FontWeight.bold,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "+",
+                      style: TextStyle(
+                        fontSize: 44.0,
+                        color: Colors.black26,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             );
