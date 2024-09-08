@@ -20,10 +20,11 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:gux/widget/gx_grid_view.dart';
 import 'package:gux/widget/gx_widget_size.dart';
 
-import '../common/congratulation.dart';
-import '../common/no_internet_page.dart';
-import '../common/thank_you_page.dart';
-import '../common/under_construction_page.dart';
+import '/gux/common/congratulation.dart';
+import '/gux/common/no_internet_page.dart';
+import '/gux/common/terms_and_conditions_page.dart';
+import '/gux/common/thank_you_page.dart';
+import '/gux/common/under_construction_page.dart';
 import '/gux/common/article_page.dart';
 import '/gux/common/failure_page.dart';
 import '/gux/common/success_page.dart';
@@ -116,6 +117,19 @@ class CommonState extends State<CommonPage> {
               onTap: () {
                 Navigator.push(context,
                   MaterialPageRoute(builder: (context) => UnderConstructionPage()),
+                );
+              },
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: styles.padding, right: styles.padding),
+              child: Divider(),
+            ),
+            ListTile(
+              title: Text('同意条款', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              trailing: Text('\ue665', style: TextStyle(fontFamily: 'gx-iconfont', fontSize: 18, fontWeight: FontWeight.bold)),
+              onTap: () {
+                Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => TermsAndConditionsPage()),
                 );
               },
             ),
