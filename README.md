@@ -15,7 +15,11 @@ follow the flutter project instruction
 
 | 欢迎页 | 首页 | 编辑表单 |
 |----|----|----|
-| ![欢迎页](asset/image/screenshot/screenshot-1.png) | ![首页](asset/image/screenshot/screenshot-2.png) | ![编辑表单](asset/image/screenshot/screenshot-3.png)         
+| ![欢迎页](asset/image/screenshot/screenshot-1.png) | ![首页](asset/image/screenshot/screenshot-2.png) | ![编辑表单](asset/image/screenshot/screenshot-3.png)  
+
+| 同意条款 | 文章阅读 | 操作成功 |
+|----|----|----|
+| ![欢迎页](asset/image/screenshot/screenshot-4.png) | ![首页](asset/image/screenshot/screenshot-5.png) | ![编辑表单](asset/image/screenshot/screenshot-6.png)         
 
 ## License
  
