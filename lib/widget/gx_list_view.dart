@@ -45,10 +45,6 @@ class GXListViewState extends State<GXListView> {
 
   List<Map<String,dynamic>> _data = [];
 
-  int _firstColumnHeight = 0;
-
-  int _secondColumnHeight = 0;
-
   @override
   void initState() {
     super.initState();
@@ -75,10 +71,26 @@ class GXListViewState extends State<GXListView> {
     );
   }
 
-  void _scrollListener() {
+  void _scrollListener() async {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      _data.addAll([{},{},{},{}]);
-      setState((){});
+      setState((){
+        _loading = true;
+      });
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 100),
+        curve: Curves.easeInOut,
+      );
+      await Future.delayed(Duration(seconds: 3));
+      _data.addAll([{},{},{},{},{}]);
+      setState(() {
+        _loading = false;
+      });
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 100),
+        curve: Curves.easeInOut,
+      );
     }
   }
 
@@ -89,7 +101,12 @@ class GXListViewState extends State<GXListView> {
       GXWidgetSize widgetSize = widget.itemBuilder(context, item, i % 2);
       ret.add(widgetSize.child);
     }
-
+    if (_loading) {
+      ret.add(SizedBox(height: 8));
+      ret.add(Center(
+        child: CircularProgressIndicator(),
+      ));
+    }
     return ret;
   }
 }
