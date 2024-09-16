@@ -21,23 +21,23 @@ import 'gx_widget_size.dart';
 typedef NullableColumIndexedWidgetBuilder =
 GXWidgetSize Function(BuildContext context, Map<String, dynamic> item, int columnIndex);
 
-class GXGridView extends StatefulWidget {
+class GXListView extends StatefulWidget {
 
   final List<Map<String, dynamic>> data;
 
   final NullableColumIndexedWidgetBuilder itemBuilder;
 
-  const GXGridView({
+  const GXListView({
     Key? key,
     required this.data,
     required NullableColumIndexedWidgetBuilder this.itemBuilder,
   }) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => GXGridViewState();
+  State<StatefulWidget> createState() => GXListViewState();
 }
 
-class GXGridViewState extends State<GXGridView> {
+class GXListViewState extends State<GXListView> {
 
   final ScrollController _scrollController = ScrollController();
 
@@ -63,18 +63,13 @@ class GXGridViewState extends State<GXGridView> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> cols = buildColumns();
     return SingleChildScrollView(
       controller: _scrollController,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Row(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            cols[0],
-            SizedBox(width: 8),
-            cols[1],
-          ],
+          children: buildList(),
         ),
       ),
     );
@@ -87,42 +82,14 @@ class GXGridViewState extends State<GXGridView> {
     }
   }
 
-  List<Widget> buildColumns() {
-    _firstColumnHeight = 0;
-    _secondColumnHeight = 0;
+  List<Widget> buildList() {
     List<Widget> ret = [];
-    List<Widget> widgetsInFirstCol = [];
-    List<Widget> widgetsInSecondCol = [];
     for (int i = 0; i < _data.length; i++) {
       Map<String,dynamic> item = _data[i];
       GXWidgetSize widgetSize = widget.itemBuilder(context, item, i % 2);
-      if (_firstColumnHeight <= _secondColumnHeight) {
-        widgetsInFirstCol.add(widgetSize.child);
-        widgetsInFirstCol.add(SizedBox(height: 8));
-        _firstColumnHeight += 8 + widgetSize.height;
-      } else {
-        widgetsInSecondCol.add(widgetSize.child);
-        widgetsInSecondCol.add(SizedBox(height: 8));
-        _secondColumnHeight += 8 + widgetSize.height;
-      }
+      ret.add(widgetSize.child);
     }
 
-    Widget firstColumn = Expanded(
-      flex: 1,
-      child: Column(
-        children: widgetsInFirstCol,
-      ),
-    );
-
-    Widget secondColumn = Expanded(
-      flex: 1,
-      child: Column(
-        children: widgetsInSecondCol,
-      ),
-    );
-
-    ret.add(firstColumn);
-    ret.add(secondColumn);
     return ret;
   }
 }

@@ -1,6 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
+import '/gux/page/list_view_page.dart';
+import '/gux/page/tabs_page.dart';
 import '/gux/page/common_page.dart';
 import '/gux/page/grid_view_page.dart';
 import '/gux/page/calendar_page.dart';
@@ -123,7 +125,9 @@ class WidgetScreen extends StatelessWidget {
             description: '传统列表以瓦片的形式单列竖式展示集合内容，是应用程序最为常用的集合内容展现部件。',
             imagePath: 'asset/image/widget/list_view.png',
             onPressed: () {
-
+              Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ListViewPage()),
+              );
             },
           ),
           buildCard4Widget(
@@ -154,7 +158,9 @@ class WidgetScreen extends StatelessWidget {
             description: '页签导航类似于滑动导航，区别在于单项的个数较少，不超过屏幕宽度，同时是需要支持内容页面的滑动切换功能。',
             imagePath: 'asset/image/widget/tabs.png',
             onPressed: () {
-
+              Navigator.push(context,
+                MaterialPageRoute(builder: (context) => TabsPage()),
+              );
             },
           ),
           buildCard4Widget(
