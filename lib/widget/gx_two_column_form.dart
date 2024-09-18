@@ -53,10 +53,10 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
   void initState() {
     super.initState();
     widget.fields.forEach((field) {
-      if (field["input"] == "text") {
-        _controllers[field["name"]] = TextEditingController();
-      } else if (field["input"] == "date") {
-        _controllers[field["name"]] = TextEditingController();
+      if (field['input'] == 'text') {
+        _controllers[field['name']] = TextEditingController();
+      } else if (field['input'] == 'date') {
+        _controllers[field['name']] = TextEditingController();
       }
     });
   }
@@ -87,54 +87,90 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
     widget.fields.forEach((field) {
       Padding padding = Padding(
         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: widget.labelWidth.toDouble(),
-              child: Padding(
-                padding: EdgeInsets.only(top: 12,),
-                child: Text(
-                (field["title"] as String) + "：",
-                style: TextStyle(fontSize: 16),
-                textAlign: TextAlign.left,
-              ),),
-            ),
-            Expanded(
-              child: buildFieldWidget(field),
-            ),
-          ],
-        ),
+        child: buildFieldRow(field),
       );
       ret.add(padding);
     });
     return ret;
   }
 
+  Widget buildFieldRow(Map<String, dynamic> field) {
+    if (field['input'] == 'title') {
+      return Container(
+        padding: EdgeInsets.only(top: 16),
+        child: Text(field['title'],
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+      );
+    } else if (field['input'] == 'avatar') {
+      String name = field['name'];
+
+      ImageProvider image;
+      // image类型的值都是数组形式
+      if (_values[name] != null) {
+        image = FileImage(File(_values[name][0]['path']));
+      } else {
+        image = AssetImage('asset/image/gux.png');
+      }
+
+      return Center(
+        child: GestureDetector(
+          child: CircleAvatar(
+            radius: 64,
+            backgroundColor: Colors.blue,
+            backgroundImage: image,
+          ),
+          onTap: () {
+            openImageSourceActionSheet(context, field['name']);
+          },
+        ),
+      );
+    } else {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: widget.labelWidth.toDouble(),
+            child: Padding(
+              padding: EdgeInsets.only(top: 12,),
+              child: Text(
+                (field['title'] as String) + '：',
+                style: TextStyle(fontSize: 16),
+                textAlign: TextAlign.left,
+              ),),
+          ),
+          Expanded(
+            child: buildFieldWidget(field),
+          ),
+        ],
+      );
+    }
+  }
+
   Widget buildFieldWidget(Map<String, dynamic> field) {
-    if (field["input"] == "date") {
+    if (field['input'] == 'date') {
       return TextField(
-        controller: _controllers[field["name"]],
+        controller: _controllers[field['name']],
         focusNode: AlwaysDisabledFocusNode(),
         style: TextStyle(fontSize: 16),
         onTap: () {
-          selectDate(context, field["name"]);
+          selectDate(context, field['name']);
         },
         decoration: InputDecoration(
           hintText: '请选择...',
           contentPadding: EdgeInsets.only(left: 16, right: 16, bottom: 4),
         ),
       );
-    } else if (field["input"] == "select") {
+    } else if (field['input'] == 'select') {
       return DropdownButtonFormField<String>(
         onChanged: (value) {
           setState(() {
-            _values[field["name"]] = value;
+            _values[field['name']] = value;
           });
         },
-        items: field["options"]["values"].map<DropdownMenuItem<String>>((single) => DropdownMenuItem(
-          value: single["value"] as String,
-          child: Text(single["text"] as String),
+        items: field['options']['values'].map<DropdownMenuItem<String>>((single) => DropdownMenuItem(
+          value: single['value'] as String,
+          child: Text(single['text'] as String),
         )).toList(),
         style: TextStyle(
           fontSize: 16,
@@ -143,48 +179,48 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
         decoration: InputDecoration(
           hintStyle: TextStyle(fontSize: 16),
           hintText: '请选择...',
-          contentPadding: EdgeInsets.only(left: 16, right: 16, bottom: 4),
+          contentPadding: EdgeInsets.only(left: 16, right: 16, bottom: 12),
         ),
       );
-    } else if (field["input"] == "check") {
+    } else if (field['input'] == 'check') {
       return Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Checkbox(
-            value: _values[field["name"]] ?? false,
+            value: _values[field['name']] ?? false,
             onChanged: (value) {
               setState(() {
-                _values[field["name"]] = value;
+                _values[field['name']] = value;
               });
             },
           ),
-          Text(field["title"], style: TextStyle(fontSize: 16),),
+          Text(field['title'], style: TextStyle(fontSize: 16),),
         ],
       );
-    } else if (field["input"] == "radio") {
+    } else if (field['input'] == 'radio') {
       return Wrap(
         spacing: 0.0,
         children: [
-          ...field["options"]["values"].map((option) => RadioListTile<String>(
+          ...field['options']['values'].map((option) => RadioListTile<String>(
             contentPadding: EdgeInsets.all(0),
-            title: Text(option["text"]),
-            value: option["value"],
-            groupValue: _values[field["name"]],
+            title: Text(option['text']),
+            value: option['value'],
+            groupValue: _values[field['name']],
             onChanged: (value) {
               setState(() {
-                _values[field["name"]] = value;
+                _values[field['name']] = value;
               });
             },
           )),
         ],
       );
-    } else if (field["input"] == "images") {
+    } else if (field['input'] == 'images') {
       return buildWidgetForImages(field);
-    } else if (field["input"] == "segment") {
+    } else if (field['input'] == 'segment') {
       return buildWidgetForSegment(field);
     } else {
       return TextField(
-        controller: _controllers[field["name"]],
+        controller: _controllers[field['name']],
         style: TextStyle(fontSize: 16),
         decoration: InputDecoration(
           hintText: '请填写',
@@ -222,14 +258,13 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
   Future<void> pickImage(ImageSource source, String name) async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: source);
-
     setState(() {
       if (pickedFile != null) {
         if (_values[name] == null) {
           _values[name] = [];
         }
         _values[name].add({
-          "path": pickedFile.path,
+          'path': pickedFile.path,
         });
       }
     });
@@ -291,7 +326,7 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
                     child: Image.file(
-                      File(image["path"]),
+                      File(image['path']),
                       fit: BoxFit.cover,
                       width: double.infinity,
                     ),
@@ -318,7 +353,7 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
   ** @private
   */
   Widget buildWidgetForImages(dynamic field) {
-    String name = field["name"];
+    String name = field['name'];
     List<dynamic> images = _values[name] ?? [];
     return Container(
       padding: EdgeInsets.only(top: 10),
@@ -336,30 +371,9 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
               onTap: () {
                 openImageSourceActionSheet(context, name);
               },
-              child: Container(
-                width: 64.0,
-                height: 64.0,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(
-                    color: Colors.black26,
-                    width: 2.0,
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      "+",
-                      style: TextStyle(
-                        fontSize: 44.0,
-                        color: Colors.black26,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+              child: Image.asset(
+                'asset/image/icon/add-image.png',
+                fit: BoxFit.cover,
               ),
             );
           }
@@ -373,7 +387,7 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
               height: 64,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: FileImage(File(image["path"])),
+                  image: FileImage(File(image['path'])),
                   fit: BoxFit.cover, // Adjust this to fit your needs
                 ),
               ),
@@ -390,12 +404,12 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
   ** @private
   */
   Widget buildWidgetForSegment(dynamic field) {
-    Map options = field["options"];
-    String name = field["name"];
-    List values = options["values"];
+    Map options = field['options'];
+    String name = field['name'];
+    List values = options['values'];
     List<Widget> items = [];
     for (int i = 0; i < values.length; i++) {
-      items.add(buildWidgetForSegmentItem(name, values[i]["value"], values[i]["text"], i, values.length));
+      items.add(buildWidgetForSegmentItem(name, values[i]['value'], values[i]['text'], i, values.length));
     }
     return Container(
       padding: EdgeInsets.only(top: 6),

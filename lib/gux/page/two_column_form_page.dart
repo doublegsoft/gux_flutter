@@ -33,7 +33,6 @@ class TwoColumnFormPageState extends State<TwoColumnFormPage> {
       ),
       body: SingleChildScrollView(
         child: styles.buildCard(
-          title: '基本信息',
           child: GXTwoColumnForm(
             fields: getFields(),
           ),
@@ -46,6 +45,17 @@ class TwoColumnFormPageState extends State<TwoColumnFormPage> {
   List<Map<String, dynamic>> getFields() {
     List<Map<String, dynamic>> ret = [];
     Map<String,dynamic> field = {};
+
+    field["input"] = "avatar";
+    field["name"] = "avatar";
+    ret.add(field);
+
+    field = {};
+    field["title"] = "基本信息";
+    field["input"] = "title";
+    ret.add(field);
+
+    field = {};
     field["title"] = "姓名";
     field["name"] = "name";
     field["input"] = "text";
@@ -74,6 +84,11 @@ class TwoColumnFormPageState extends State<TwoColumnFormPage> {
     field["title"] = "出生日期";
     field["name"] = "birthdate";
     field["input"] = "date";
+    ret.add(field);
+
+    field = {};
+    field["title"] = "其他信息";
+    field["input"] = "title";
     ret.add(field);
 
     field = {};

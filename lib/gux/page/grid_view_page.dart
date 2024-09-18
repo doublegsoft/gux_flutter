@@ -27,19 +27,28 @@ class GridViewPage extends StatefulWidget {
 
 class GridViewState extends State<GridViewPage> {
 
-  List<Map<String, dynamic>> data = [{},{},{}];
+  int _start = 0;
 
   @override
   Widget build(BuildContext context) {
-    data = [{},{},{},{},{},{},{}];
     return Scaffold(
       appBar: AppBar(
         title: Text('栅格列表'),
       ),
       body: GXGridView(
-        data: data,
+        future: fetchData(),
+        loadBuilder: (Future<List<Map<String,dynamic>>> future) {
+          setState(() {
+            future = fetchData();
+          });
+        },
         itemBuilder: (context, item, columnIndex) {
-          return _buildCard(columnIndex);
+          GXWidgetSize card = _buildCard(columnIndex);
+          return GXWidgetSize(
+            height: card.height,
+            onChange: (size) {},
+            child: card,
+          );
         },
       ),
     );
@@ -85,5 +94,38 @@ class GridViewState extends State<GridViewPage> {
       height: columnIndex == 0 ? 220 : 320,
       onChange: (size) {},
     );
+  }
+
+  Future<List<Map<String,dynamic>>> fetchData() async {
+    await Future.delayed(Duration(seconds: 2));
+    print("start = " + _start.toString());
+    _start += 15;
+    return [{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    }];
   }
 }

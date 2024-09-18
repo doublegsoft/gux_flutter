@@ -18,19 +18,24 @@ import 'package:flutter/material.dart';
 
 import 'gx_widget_size.dart';
 
-typedef NullableColumIndexedWidgetBuilder =
+typedef ColumIndexedWidgetBuilder =
 GXWidgetSize Function(BuildContext context, Map<String, dynamic> item, int columnIndex);
+
+typedef DataLoadBuilder = Function(Future<List<Map<String,dynamic>>>);
 
 class GXGridView extends StatefulWidget {
 
-  final List<Map<String, dynamic>> data;
+  final Future<List<Map<String,dynamic>>> future;
 
-  final NullableColumIndexedWidgetBuilder itemBuilder;
+  final ColumIndexedWidgetBuilder itemBuilder;
+
+  final DataLoadBuilder? loadBuilder;
 
   const GXGridView({
     Key? key,
-    required this.data,
-    required NullableColumIndexedWidgetBuilder this.itemBuilder,
+    required this.future,
+    required ColumIndexedWidgetBuilder this.itemBuilder,
+    DataLoadBuilder? this.loadBuilder,
   }) : super(key: key);
 
   @override
@@ -41,9 +46,11 @@ class GXGridViewState extends State<GXGridView> {
 
   final ScrollController _scrollController = ScrollController();
 
-  bool _loading = false;
+  late Future<List<Map<String,dynamic>>> _future;
 
   List<Map<String,dynamic>> _data = [];
+
+  bool _loading = false;
 
   int _firstColumnHeight = 0;
 
@@ -53,7 +60,7 @@ class GXGridViewState extends State<GXGridView> {
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
-    _data = widget.data;
+    _future = widget.future;
   }
 
   @override
@@ -63,20 +70,43 @@ class GXGridViewState extends State<GXGridView> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> cols = buildColumns();
-    return SingleChildScrollView(
-      controller: _scrollController,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            cols[0],
-            SizedBox(width: 8),
-            cols[1],
-          ],
-        ),
-      ),
+    _firstColumnHeight = 0;
+    _secondColumnHeight = 0;
+    return FutureBuilder(
+      future: _future,
+      builder: (BuildContext context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('ERROR'));
+        } else if (snapshot.hasData) {
+          if (snapshot.data!.length == 0) {
+            // no data
+          }
+          _data.addAll(snapshot.data!);
+          List<Widget> cols = buildColumns();
+          // _scrollController.animateTo(
+          //   _scrollController.position.maxScrollExtent,
+          //   duration: Duration(milliseconds: 100),
+          //   curve: Curves.easeInOut,
+          // );
+          return SingleChildScrollView(
+            controller: _scrollController,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  cols[0],
+                  SizedBox(width: 8),
+                  cols[1],
+                ],
+              ),
+            ),
+          );
+        }
+        return Container();
+      },
     );
   }
 
@@ -88,8 +118,6 @@ class GXGridViewState extends State<GXGridView> {
   }
 
   List<Widget> buildColumns() {
-    _firstColumnHeight = 0;
-    _secondColumnHeight = 0;
     List<Widget> ret = [];
     List<Widget> widgetsInFirstCol = [];
     List<Widget> widgetsInSecondCol = [];

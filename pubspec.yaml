@@ -39,6 +39,7 @@ flutter:
 
   assets:
     - asset/image/
+    - asset/image/icon/
     - asset/image/common/
     - asset/image/widget/
 

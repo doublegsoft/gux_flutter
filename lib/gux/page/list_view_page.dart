@@ -30,24 +30,30 @@ class ListViewPage extends StatefulWidget {
 
 class ListViewState extends State<ListViewPage> {
 
-  List<Map<String, dynamic>> data = [{},{},{}];
+  late Future<List<Map<String, dynamic>>> _future;
+
+  int _start = 0;
 
   @override
   Widget build(BuildContext context) {
-    data = [{},{},{},{},{},{},{},{},{},{},{},{},{}];
     return Scaffold(
       appBar: AppBar(
         title: Text('传统列表'),
       ),
       body: GXListView(
-        data: data,
+        future: fetchData(),
+        loadBuilder: (Future<List<Map<String,dynamic>>> future) {
+          setState(() {
+            future = fetchData();
+          });
+        },
         itemBuilder: (context, item, columnIndex) {
           return GXWidgetSize(
             height: 120,
             onChange: (size) {},
             child: styles.buildTile(context,
-              title: '传统列表',
-              description: '一种最常用的集合数据展现方式。',
+              title: item['title'],
+              description: item['description'],
             ),
           );
         },
@@ -58,42 +64,75 @@ class ListViewState extends State<ListViewPage> {
   GXWidgetSize _buildCard(int columnIndex) {
     return GXWidgetSize(
       child: Container(
-          padding: EdgeInsets.only(bottom: 8.0),
-          height: columnIndex == 0 ? 220 : 320,
-          color: Color.fromRGBO(234,234,234,1),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 160,
-                  child: FittedBox(
-                    fit: BoxFit.fill,
-                    child: Image.network('https://picsum.photos/300/160'),
-                  ),
-                ),
-                Padding(
-                    padding: EdgeInsets.only(left: 16, right: 16, top: 8,),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("hello", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          Text("world", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                        ]
-                    )
-                ),
-                (columnIndex == 0 ? Container() : Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical:0,horizontal:16),
-                    child: Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry. when an unknown printer took a galley of type and scrambled it to make a type specimen book.", style: TextStyle(fontSize: 12)),
-                  ),
-                )
-                ),
-              ]
-          )
+        padding: EdgeInsets.only(bottom: 8.0),
+        height: columnIndex == 0 ? 220 : 320,
+        color: Color.fromRGBO(234,234,234,1),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: 160,
+              child: FittedBox(
+                fit: BoxFit.fill,
+                child: Image.network('https://picsum.photos/300/160'),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 16, right: 16, top: 8,),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("hello", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text("world", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+            (columnIndex == 0 ? Container() : Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical:0,horizontal:16),
+                child: Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry. when an unknown printer took a galley of type and scrambled it to make a type specimen book.", style: TextStyle(fontSize: 12)),
+              ),
+            )
+            ),
+          ],
+        ),
       ),
       height: columnIndex == 0 ? 220 : 320,
       onChange: (size) {},
     );
+  }
+
+  Future<List<Map<String,dynamic>>> fetchData() async {
+    await Future.delayed(Duration(seconds: 2));
+    print("start = " + _start.toString());
+    _start += 15;
+    return [{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    }];
   }
 }
