@@ -1,6 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
+import '/gux/page/bar_chart_page.dart';
+import '/gux/page/line_chart_page.dart';
 import '/gux/page/list_view_page.dart';
 import '/gux/page/tabs_page.dart';
 import '/gux/page/common_page.dart';
@@ -160,6 +162,30 @@ class WidgetScreen extends StatelessWidget {
             onPressed: () {
               Navigator.push(context,
                 MaterialPageRoute(builder: (context) => TabsPage()),
+              );
+            },
+          ),
+          buildCard4Widget(
+            context: context,
+            title: '折线图表',
+            description: '折线图表提供按照类别对某类信息趋势分析的数据可视化的解决方案。',
+            imagePath: 'asset/image/widget/line_chart.png',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LineChartPage()),
+              );
+            },
+          ),
+          buildCard4Widget(
+            context: context,
+            title: '柱状图表',
+            description: '柱状图表提供按照类别对某类信息统计的数据可视化的解决方案，同时也支持主维度下子维度的展示。',
+            imagePath: 'asset/image/widget/bar_chart.png',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => BarChartPage()),
               );
             },
           ),
