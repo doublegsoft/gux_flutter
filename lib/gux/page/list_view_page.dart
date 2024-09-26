@@ -23,6 +23,7 @@ import 'package:gux/widget/gx_grid_view.dart';
 import 'package:gux/widget/gx_widget_size.dart';
 import 'package:gux/widget/gx_list_view.dart';
 
+import '../../widget/gx_pull_to_refresh.dart';
 import "/styles.dart" as styles;
 
 class ListViewPage extends StatefulWidget {
@@ -48,42 +49,16 @@ class ListViewState extends State<ListViewPage> {
       appBar: AppBar(
         title: Text('传统列表'),
       ),
-      body: CustomRefreshIndicator(
+      body: GXPullToRefresh(
         onRefresh: () async {
-          if (_stateOfRefreshing == IndicatorState.finalizing) {
-            setState(() {
-              _heightOfRefreshing = 100;
-            });
-          }
           await Future.delayed(Duration(seconds: 2,));
         },
-        builder: (context, child, controller) {
-          _heightOfRefreshing = 100 * (controller.value >= 1 ? 1 : controller.value);
-          if (controller.isFinalizing && _stateOfRefreshing != IndicatorState.finalizing) {
-            _stateOfRefreshing = IndicatorState.finalizing;
-            _heightOfRefreshing = 100;
-          } else if (controller.isCanceling) {
-            _stateOfRefreshing = IndicatorState.canceling;
-          }
-          return Stack(
-            alignment: Alignment.topCenter,
-            children: <Widget>[
-              Container(
-                color: Colors.black,
-                width: styles.screenWidth,
-                height: _heightOfRefreshing,
-                child: Center(
-                  child: controller.isIdle ? Container() :  CircularProgressIndicator(),
-                ),
-              ),
-              Transform.translate(
-                offset: Offset(0, 100.0 * controller.value),
-                child: child,
-              ),
-            ],
-          );
-        },
-        child: GXListView(
+        title: '正在刷新数据...',
+        height: 160,
+        image: Text('X', style: TextStyle(fontSize: 16, color: Colors.white)),
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.black,
+        body: GXListView(
           future: fetchData(),
           loadBuilder: (Future<List<Map<String,dynamic>>> future) {
             // setState(() {
