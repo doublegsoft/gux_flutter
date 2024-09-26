@@ -14,14 +14,17 @@ dependencies:
 
   intl: ^0.19.0
   http: ^0.13.3
+  provider: ^6.0.0
   cupertino_icons: ^1.0.2
   image_picker: ^1.0.0
   photo_view: ^0.14.0
-  persistent_bottom_nav_bar: ^6.2.1
   table_calendar: ^3.1.2
   carousel_slider: ^5.0.0
   webview_flutter: ^4.0.0
   fl_chart: ^0.69.0
+  flutter_ruler_picker: ^1.0.6
+  custom_refresh_indicator: ^4.0.1
+#  moon_ruler_picker: ^1.0.6
 
 dev_dependencies:
   flutter_test:

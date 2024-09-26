@@ -98,7 +98,6 @@ class GridViewState extends State<GridViewPage> {
 
   Future<List<Map<String,dynamic>>> fetchData() async {
     await Future.delayed(Duration(seconds: 2));
-    print("start = " + _start.toString());
     _start += 15;
     return [{
       'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',

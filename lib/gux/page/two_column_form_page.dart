@@ -87,6 +87,22 @@ class TwoColumnFormPageState extends State<TwoColumnFormPage> {
     ret.add(field);
 
     field = {};
+    field["title"] = "身高";
+    field["name"] = "height";
+    field["input"] = "ruler";
+    field["range"] = [100, 260];
+    field["unit"] = "cm";
+    ret.add(field);
+
+    field = {};
+    field["title"] = "体重";
+    field["name"] = "weight";
+    field["input"] = "ruler";
+    field["range"] = [30, 150];
+    field["unit"] = "kg";
+    ret.add(field);
+
+    field = {};
     field["title"] = "其他信息";
     field["input"] = "title";
     ret.add(field);

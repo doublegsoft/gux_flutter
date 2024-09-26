@@ -17,9 +17,13 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ruler_picker/flutter_ruler_picker.dart';
+import 'package:gux/widget/gx_ruler_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:photo_view/photo_view.dart';
+import 'package:provider/provider.dart';
+
+import '/styles.dart' as styles;
 
 class AlwaysDisabledFocusNode extends FocusNode {
   @override
@@ -47,7 +51,7 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
 
   final Map<String, dynamic> _values = {};
 
-  final Map<String, TextEditingController> _controllers = {};
+  final Map<String, dynamic> _controllers = {};
 
   @override
   void initState() {
@@ -57,6 +61,9 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
         _controllers[field['name']] = TextEditingController();
       } else if (field['input'] == 'date') {
         _controllers[field['name']] = TextEditingController();
+      } else if (field['input'] == 'ruler') {
+        _controllers[field['name']] = RulerPickerController();
+        _values[field['name']] = field['value']??double.infinity;
       }
     });
   }
@@ -110,7 +117,7 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
       if (_values[name] != null) {
         image = FileImage(File(_values[name][0]['path']));
       } else {
-        image = AssetImage('asset/image/gux.png');
+        image = AssetImage('asset/image/common/avatar.png');
       }
 
       return Center(
@@ -150,7 +157,7 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
   Widget buildFieldWidget(Map<String, dynamic> field) {
     if (field['input'] == 'date') {
       return TextField(
-        controller: _controllers[field['name']],
+        controller: _controllers[field['name']] as TextEditingController,
         focusNode: AlwaysDisabledFocusNode(),
         style: TextStyle(fontSize: 16),
         onTap: () {
@@ -158,8 +165,22 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
         },
         decoration: InputDecoration(
           hintText: '请选择...',
+          hintStyle: TextStyle(color: styles.colorTextPlaceholder),
           contentPadding: EdgeInsets.only(left: 16, right: 16, bottom: 4),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: styles.colorDivider,
+              width: 1.0, // Width of the bottom border when not focused
+            ),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: styles.colorPrimary, // Color of the bottom border when focused
+              width: 1.0, // Width of the bottom border when focused
+            ),
+          ),
         ),
+
       );
     } else if (field['input'] == 'select') {
       return DropdownButtonFormField<String>(
@@ -177,7 +198,7 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
           color: Colors.black,
         ),
         decoration: InputDecoration(
-          hintStyle: TextStyle(fontSize: 16),
+          hintStyle: TextStyle(fontSize: 16, color: styles.colorTextPlaceholder),
           hintText: '请选择...',
           contentPadding: EdgeInsets.only(left: 16, right: 16, bottom: 12),
         ),
@@ -218,13 +239,28 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
       return buildWidgetForImages(field);
     } else if (field['input'] == 'segment') {
       return buildWidgetForSegment(field);
+    } else if (field['input'] == 'ruler') {
+      return buildWidgetForRuler(field);
     } else {
       return TextField(
-        controller: _controllers[field['name']],
+        controller: _controllers[field['name']] as TextEditingController,
         style: TextStyle(fontSize: 16),
         decoration: InputDecoration(
           hintText: '请填写',
+          hintStyle: TextStyle(color: styles.colorTextPlaceholder),
           contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: styles.colorDivider,
+              width: 1.0, // Width of the bottom border when not focused
+            ),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: styles.colorPrimary,
+              width: 1.0, // Width of the bottom border when focused
+            ),
+          ),
         ),
       );
     }
@@ -245,7 +281,7 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
     if (picked != null) {
       setState(() {
         _values[name] = picked;
-        _controllers[name]?.text = DateFormat('yyyy-MM-dd').format(picked);
+        (_controllers[name] as TextEditingController).text = DateFormat('yyyy-MM-dd').format(picked);
       });
     }
   }
@@ -433,19 +469,19 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
           color: Colors.transparent,
           border: Border(
             top: BorderSide(
-              color: Colors.blue, // Top border color
+              color: styles.colorPrimary,
               width: 2, // Top border width
             ),
             bottom: BorderSide(
-              color: Colors.blue, // Bottom border color
+              color: styles.colorPrimary,
               width: 2, // Bottom border width
             ),
             left: BorderSide(
-              color: Colors.blue, // Left border color
+              color: styles.colorPrimary,
               width: 2, // Left border width
             ),
             right: (index == count - 1) ? BorderSide(
-              color: Colors.blue, // Left border color
+              color: styles.colorPrimary,
               width: 2, // Left border width
             ) : BorderSide.none,
           ),
@@ -471,6 +507,45 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildWidgetForRuler(dynamic field) {
+    String name = field['name']!;
+    return Container(
+      child: ListTile(
+        dense: true,
+        contentPadding: EdgeInsets.only(bottom: 0, left: 16),
+        title: Text((_values[name] == double.infinity ? '' : _values[name].toInt()).toString(),
+          style: TextStyle(fontSize: 16, color: styles.colorTextPlaceholder)
+        ),
+        trailing: field['unit'] != null ? Text(field['unit']) : null,
+        onTap: () {
+          showModalBottomSheet<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return GXRulerPicker(
+                max: field['range'][1],
+                min: field['range'][0],
+                value: _values[name],
+                onValueChanged: (value) {
+                  setState(() {
+                    _values[name] = value.toDouble();
+                  });
+                },
+              );
+            },
+          );
+        },
+      ),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: styles.colorDivider,
+            width: 1.0, // Width of the bottom border
+          ),
         ),
       ),
     );

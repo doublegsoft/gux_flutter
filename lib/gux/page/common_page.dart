@@ -150,6 +150,37 @@ class CommonState extends State<CommonPage> {
               padding: EdgeInsets.only(left: styles.padding, right: styles.padding),
               child: Divider(),
             ),
+            ListTile(
+              title: Text('底部弹出', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              trailing: Text('\ue665', style: TextStyle(fontFamily: 'gx-iconfont', fontSize: 18, fontWeight: FontWeight.bold)),
+              onTap: () {
+                showModalBottomSheet<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return SizedBox(
+                      height: 200,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            const Text('Modal BottomSheet'),
+                            ElevatedButton(
+                              child: const Text('Close BottomSheet'),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: styles.padding, right: styles.padding),
+              child: Divider(),
+            ),
           ],
         ),
       ),

@@ -17,11 +17,60 @@ import 'package:flutter/material.dart';
 
 const double padding = 16.0;
 
-const Color colorTextPrimary = Color.fromRGBO(0, 0, 0, 0.87);
-const Color colorTextSecondary = Color.fromRGBO(0, 0, 0, 0.6);
-const Color colorTextInverse = Color.fromRGBO(250, 250, 250, 1);
+late double _screenWidth;
 
-const Color colorSurface = Color(0xFFB2D7FF);
+late double _screenHeight;
+
+void init(BuildContext context) {
+  final size = MediaQuery.of(context).size;
+  _screenHeight = size.height;
+  _screenWidth = size.width;
+}
+
+Color get colorPrimary {
+  return Color(0xff3f86ff);
+}
+
+Color get colorError {
+  return Color(0xffd32f2f);
+}
+
+Color get colorDivider {
+  return Color.fromRGBO(0, 0, 0, 0.4);
+}
+
+Color get colorSurface {
+  return Color(0xFFB2D7FF);
+}
+
+Color get colorTextPrimary {
+  return Color.fromRGBO(0, 0, 0, 0.87);
+}
+
+Color get colorTextSecondary {
+  return Color.fromRGBO(0, 0, 0, 0.87);
+}
+
+Color get colorTextInverse {
+  return Color.fromRGBO(250, 250, 250, 1);
+}
+
+Color get colorTextPlaceholder {
+  return Color.fromRGBO(0, 0, 0, 0.4);
+}
+
+double get screenHeight {
+  return _screenHeight;
+}
+
+double get screenWidth {
+  return _screenWidth;
+}
+
+double width(context, int paddingCount, int count) {
+  double width = MediaQuery.of(context).size.width;
+  return (width - padding * paddingCount) / count;
+}
 
 Widget buildCard({
   required Widget child,
@@ -66,31 +115,44 @@ Widget buildCard({
 }
 
 Widget buildTile(BuildContext context, {
-  required String title,
+  String? title,
+  Widget? titleWidget,
   String? subtitle = "",
+  Widget? subtitleWidget,
   String? description = "",
+  Widget? descriptionWidget,
   String? imagePath = "",
   double? imageWidth = 72,
   double? imageHeight = 72,
+  Widget? imageWidget,
   Widget? accent,
   List<Widget>? numbers = const[],
+  GestureTapCallback? onTap,
 }) {
   List<Widget> lines = [];
   lines.add(SizedBox(height: 0));
-  lines.add(Text(title,
-    style: TextStyle(fontSize: 18, color: colorTextPrimary),
-  ),);
+  if (title != null) {
+    lines.add(Text(title,
+      style: TextStyle(fontSize: 18, color: colorTextPrimary),
+    ),);
+  } else if (titleWidget != null) {
+    lines.add(titleWidget!);
+  }
   if (subtitle != '') {
     lines.add(Text(
       subtitle!,
       style: TextStyle(fontSize: 15, color: colorTextSecondary),
     ),);
+  } else if (subtitleWidget != null) {
+    lines.add(subtitleWidget!);
   }
   if (description != '') {
     lines.add(Text(
       description!,
       style: TextStyle(fontSize: 14, color: colorTextSecondary),
     ),);
+  } else if (descriptionWidget != null) {
+    lines.add(descriptionWidget!);
   }
 
   List<Widget> childrenInFirst = [];
@@ -103,6 +165,9 @@ Widget buildTile(BuildContext context, {
         fit: BoxFit.cover,
       ),
     );
+    childrenInFirst.add(SizedBox(width: 16),);
+  } else if (imageWidget != null) {
+    childrenInFirst.add(imageWidget);
     childrenInFirst.add(SizedBox(width: 16),);
   }
   childrenInFirst.add(
@@ -147,6 +212,7 @@ Widget buildTile(BuildContext context, {
       ),
     );
   }
+
   return Container(
     margin: EdgeInsets.only(top: 16, left: 16, right: 16),
     decoration: BoxDecoration(
@@ -158,9 +224,7 @@ Widget buildTile(BuildContext context, {
       child: Column(
         children: children,
       ),
-      onTap: () {
-        print('hello');
-      },
+      onTap: onTap != null ? onTap : () {},
     ),
   );
 }

@@ -13,6 +13,8 @@
 ** ─██████████████─██████████████─████████──████████─
 ** ──────────────────────────────────────────────────
 */
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -34,30 +36,114 @@ class ListViewState extends State<ListViewPage> {
 
   int _start = 0;
 
+  bool _isRefreshing = false;
+
+  IndicatorState _stateOfRefreshing = IndicatorState.idle;
+
+  double _heightOfRefreshing = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('传统列表'),
       ),
-      body: GXListView(
-        future: fetchData(),
-        loadBuilder: (Future<List<Map<String,dynamic>>> future) {
-          setState(() {
-            future = fetchData();
-          });
+      body: CustomRefreshIndicator(
+        onRefresh: () async {
+          if (_stateOfRefreshing == IndicatorState.finalizing) {
+            setState(() {
+              _heightOfRefreshing = 100;
+            });
+          }
+          await Future.delayed(Duration(seconds: 2,));
         },
-        itemBuilder: (context, item, columnIndex) {
-          return GXWidgetSize(
-            height: 120,
-            onChange: (size) {},
-            child: styles.buildTile(context,
-              title: item['title'],
-              description: item['description'],
-            ),
+        builder: (context, child, controller) {
+          _heightOfRefreshing = 100 * (controller.value >= 1 ? 1 : controller.value);
+          if (controller.isFinalizing && _stateOfRefreshing != IndicatorState.finalizing) {
+            _stateOfRefreshing = IndicatorState.finalizing;
+            _heightOfRefreshing = 100;
+          } else if (controller.isCanceling) {
+            _stateOfRefreshing = IndicatorState.canceling;
+          }
+          return Stack(
+            alignment: Alignment.topCenter,
+            children: <Widget>[
+              Container(
+                color: Colors.black,
+                width: styles.screenWidth,
+                height: _heightOfRefreshing,
+                child: Center(
+                  child: controller.isIdle ? Container() :  CircularProgressIndicator(),
+                ),
+              ),
+              Transform.translate(
+                offset: Offset(0, 100.0 * controller.value),
+                child: child,
+              ),
+            ],
           );
         },
+        child: GXListView(
+          future: fetchData(),
+          loadBuilder: (Future<List<Map<String,dynamic>>> future) {
+            // setState(() {
+            //   future = fetchData();
+            // });
+          },
+          itemBuilder: (context, item, columnIndex) {
+            return GXWidgetSize(
+              height: 120,
+              onChange: (size) {},
+              child: styles.buildTile(context,
+                title: item['title'],
+                accent: Container(
+                  margin: EdgeInsets.only(left: 16, top: 16, bottom: 16),
+                  width: 100,
+                  height: 40,
+                  child: LineChart(
+                    LineChartData(
+                      lineBarsData: [
+                        LineChartBarData(
+                          spots: [
+                            FlSpot(0, 3),
+                            FlSpot(1, 2),
+                            FlSpot(2, 5),
+                            FlSpot(3, 3),
+                            FlSpot(4, 6),
+                            FlSpot(5, 4),
+                            FlSpot(6, 7),
+                          ],
+                          isCurved: true,
+                          color: Colors.blue,
+                          barWidth: 3,
+                          isStrokeCapRound: true,
+                          dotData: FlDotData(
+                            show: true,
+                          ),
+                          belowBarData: BarAreaData(
+                            show: false,
+                          ),
+                        ),
+                      ],
+                      titlesData: FlTitlesData(
+                        show: false,
+                      ),
+                      gridData: FlGridData(
+                        show: false,
+                      ),
+                      borderData: FlBorderData(
+                        show: false, // 隐藏边框
+                      ),
+                    ),
+                  ),
+                ),
+                description: item['description'],
+              ),
+            );
+          },
+        ),
       ),
+
     );
   }
 
@@ -104,8 +190,7 @@ class ListViewState extends State<ListViewPage> {
   }
 
   Future<List<Map<String,dynamic>>> fetchData() async {
-    await Future.delayed(Duration(seconds: 2));
-    print("start = " + _start.toString());
+    await Future.delayed(Duration(seconds: 1));
     _start += 15;
     return [{
       'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
@@ -117,22 +202,22 @@ class ListViewState extends State<ListViewPage> {
       'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
     },{
       'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
-    },{
-      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
-    },{
-      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
-    },{
-      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
-    },{
-      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
-    },{
-      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
-    },{
-      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
-    },{
-      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
-    },{
-      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    // },{
+    //   'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    // },{
+    //   'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    // },{
+    //   'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    // },{
+    //   'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    // },{
+    //   'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    // },{
+    //   'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    // },{
+    //   'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    // },{
+    //   'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
     }];
   }
 }

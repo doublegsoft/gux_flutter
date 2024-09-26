@@ -15,20 +15,30 @@
 */
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 import '/welcome.dart';
 import 'gux/screen/app_screen.dart';
 import 'gux/screen/page_screen.dart';
 import 'gux/screen/widget_screen.dart';
 
+import 'package:gux/styles.dart' as styles;
+
 void main() {
   initializeDateFormatting().then((_) => runApp(GUX()));
 }
 
-class GUX extends StatelessWidget {
+class GUX extends StatefulWidget {
+
+  @override
+  State<StatefulWidget> createState() => GUXState();
+
+}
+
+class GUXState extends State<GUX> with WidgetsBindingObserver {
+
   @override
   Widget build(BuildContext context) {
+    styles.init(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       // home: WelcomeScreen(),
@@ -38,13 +48,44 @@ class GUX extends StatelessWidget {
       },
     );
   }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    switch (state) {
+      case AppLifecycleState.resumed:
+      // App is resumed (foreground)
+        print('App resumed');
+        break;
+      case AppLifecycleState.inactive:
+      // App is inactive (e.g., when a phone call is received)
+        print('App inactive');
+        break;
+      case AppLifecycleState.paused:
+      // App is paused (background)
+        print('App paused');
+        break;
+      case AppLifecycleState.detached:
+      // App is detached (e.g., when the system is shutting down the app)
+        print('App detached');
+        break;
+      case AppLifecycleState.hidden:
+        // TODO: Handle this case.
+    }
+  }
 }
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
 
-  final _pageController = PageController(initialPage: 0);
+  const MainPage({super.key});
 
-  final PersistentTabController _controller = PersistentTabController(initialIndex: 0);
+  @override
+  State<MainPage> createState() => MainPageState();
+}
+
+class MainPageState extends State<MainPage> {
+
+  int _currentPageIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -53,35 +94,33 @@ class MainPage extends StatelessWidget {
       child: Scaffold(
         extendBodyBehindAppBar: false, // Extends the body behind the AppBar
         appBar: null,
-        // bottomNavigationBar:
-        body: PersistentTabView(context,
-          controller: _controller,
-          items: <PersistentBottomNavBarItem>[
-            PersistentBottomNavBarItem(
-              icon: Icon(Icons.home),
-              title: "Home",
-              activeColorPrimary: Colors.blue,
-              inactiveColorPrimary: Colors.grey,
+        bottomNavigationBar: NavigationBar(
+          onDestinationSelected: (int index) {
+            setState(() {
+              _currentPageIndex = index;
+            });
+          },
+          indicatorColor: Colors.amber,
+          selectedIndex: _currentPageIndex,
+          destinations: const <Widget>[
+            NavigationDestination(
+              selectedIcon: Icon(Icons.home),
+              icon: Icon(Icons.home_outlined),
+              label: '组件',
             ),
-            PersistentBottomNavBarItem(
-              icon: Icon(Icons.search),
-              title: ("Search"),
-              activeColorPrimary: Colors.blue,
-              inactiveColorPrimary: Colors.grey,
+            NavigationDestination(
+              selectedIcon: Icon(Icons.find_in_page),
+              icon: Icon(Icons.find_in_page_outlined),
+              label: '页面',
             ),
-            PersistentBottomNavBarItem(
-              icon: Icon(Icons.person),
-              title: ("Profile"),
-              activeColorPrimary: Colors.blue,
-              inactiveColorPrimary: Colors.grey,
+            NavigationDestination(
+              selectedIcon: Icon(Icons.touch_app),
+              icon: Icon(Icons.touch_app_outlined),
+              label: '应用',
             ),
           ],
-          backgroundColor: Colors.white,
-          // hideNavigationBarWhenKeyboardShows: true,
-          // popAllScreensOnTapOfSelectedTab: true,
-          navBarStyle: NavBarStyle.style13,
-          screens: [WidgetScreen(), PageScreen(), AppScreen()],
         ),
+        body: [WidgetScreen(), PageScreen(), AppScreen()][_currentPageIndex],
       ),
     );
   }
