@@ -33,15 +33,12 @@ class ListViewPage extends StatefulWidget {
 
 class ListViewState extends State<ListViewPage> {
 
-  late Future<List<Map<String, dynamic>>> _future;
-
   int _start = 0;
 
-  bool _isRefreshing = false;
-
-  IndicatorState _stateOfRefreshing = IndicatorState.idle;
-
-  double _heightOfRefreshing = 0;
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +49,9 @@ class ListViewState extends State<ListViewPage> {
       body: GXPullToRefresh(
         onRefresh: () async {
           await Future.delayed(Duration(seconds: 2,));
+          setState(() {
+            _start = -1 /* refresh */;
+          });
         },
         title: '正在刷新数据...',
         height: 160,
@@ -59,12 +59,8 @@ class ListViewState extends State<ListViewPage> {
         foregroundColor: Colors.white,
         backgroundColor: Colors.black,
         body: GXListView(
-          future: fetchData(),
-          loadBuilder: (Future<List<Map<String,dynamic>>> future) {
-            // setState(() {
-            //   future = fetchData();
-            // });
-          },
+          start: _start,
+          onLoadMore: fetchData,
           itemBuilder: (context, item, columnIndex) {
             return GXWidgetSize(
               height: 120,
@@ -166,7 +162,14 @@ class ListViewState extends State<ListViewPage> {
 
   Future<List<Map<String,dynamic>>> fetchData() async {
     await Future.delayed(Duration(seconds: 1));
-    _start += 15;
+    print('fetchData start = $_start');
+    if (_start == -1) {
+      _start = 0;
+    }
+    setState(() {
+      _start += 7;
+    });
+
     return [{
       'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
     },{
@@ -177,10 +180,10 @@ class ListViewState extends State<ListViewPage> {
       'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
     },{
       'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
-    // },{
-    //   'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
-    // },{
-    //   'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
+    },{
+      'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
     // },{
     //   'title':'传统列表', 'description':'传统列表是一种最常用的集合数据展现方式',
     // },{

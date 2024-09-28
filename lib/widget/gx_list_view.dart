@@ -17,26 +17,29 @@ import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'gx_load_more.dart';
 import 'gx_widget_size.dart';
+
+import '/styles.dart' as styles;
 
 typedef ColumIndexedWidgetBuilder =
 GXWidgetSize Function(BuildContext context, Map<String, dynamic> item, int columnIndex);
 
-typedef DataLoadBuilder = Function(Future<List<Map<String,dynamic>>>);
+typedef LoadMoreCallback = Future<List> Function();
 
 class GXListView extends StatefulWidget {
 
-  final Future<List<Map<String,dynamic>>> future;
-
   final ColumIndexedWidgetBuilder itemBuilder;
 
-  final DataLoadBuilder? loadBuilder;
+  final LoadMoreCallback? onLoadMore;
+
+  final int start;
 
   const GXListView({
     Key? key,
-    required this.future,
+    required this.start,
     required ColumIndexedWidgetBuilder this.itemBuilder,
-    DataLoadBuilder? this.loadBuilder,
+    LoadMoreCallback? this.onLoadMore,
   }) : super(key: key);
 
   @override
@@ -47,84 +50,132 @@ class GXListViewState extends State<GXListView> {
 
   final ScrollController _scrollController = ScrollController();
 
-  bool _loading = false;
+  List _data = [];
 
-  late Future<List<Map<String,dynamic>>> _future;
+  late Future<void> _future4LoadMore;
 
-  List<Map<String,dynamic>> _data = [];
+  late GXLoadMoreStatus _loadMoreStatus;
+
+  late double _bottomOffset;
 
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_scrollListener);
-    _future = widget.future;
+    _future4LoadMore = _loadMore();
+    if (widget.onLoadMore != null) {
+      _scrollController.addListener(_scrollListener);
+      _loadMoreStatus = GXLoadMoreStatus.idle;
+      _bottomOffset = 0;
+    }
   }
 
   @override
   void dispose() {
     super.dispose();
+    _scrollController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      controller: _scrollController,
-      physics: AlwaysScrollableScrollPhysics(),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: FutureBuilder(
-          future: _future,
-          builder: (BuildContext context, AsyncSnapshot<List<Map<String,dynamic>>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('ERROR'));
-            } else if (snapshot.hasData) {
-              if (snapshot.data!.length == 0) {
-                // no data
+    if (widget.start == -1) {
+      _data.clear();
+      setState(() {
+        _future4LoadMore = _loadMore();
+      });
+    }
+    return NotificationListener<ScrollEndNotification>(
+      onNotification: (ScrollEndNotification scrollEnd) {
+        final metrics = scrollEnd.metrics;
+        if (!metrics.atEdge) return true;
+        if (metrics.pixels == 0) return true;
+        if (_loadMoreStatus == GXLoadMoreStatus.loading) {
+          _loadMore();
+        }
+        return true;
+      },
+      child: CustomScrollView(
+        controller: _scrollController,
+        physics: AlwaysScrollableScrollPhysics(),
+        slivers: [
+          FutureBuilder(
+            future: _future4LoadMore,
+            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: styles.padding),
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return SliverToBoxAdapter(
+                  child: Center(child: Text('错误')),
+                );
               }
-              _data.addAll(snapshot.data!);
-              _scrollController.animateTo(
-                _scrollController.position.maxScrollExtent,
-                duration: Duration(milliseconds: 100),
-                curve: Curves.easeInOut,
+              return SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                    final item = _data[index];
+                    return widget.itemBuilder(context, item, index);
+                  },
+                  childCount: _data.length,
+                ),
               );
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: buildList(),
-              );
-            }
-            return Container();
-          },
-        ),
+            },
+          ),
+          if (_loadMoreStatus == GXLoadMoreStatus.loading) SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.only(top: styles.padding),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          ),
+        ],
       ),
     );
   }
 
   void _scrollListener() async {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      setState((){
-        _loading = false;
+    if (_loadMoreStatus == GXLoadMoreStatus.loading) {
+      return;
+    }
+    if (_loadMoreStatus == GXLoadMoreStatus.touching) {
+      if ((_scrollController.offset - _bottomOffset) > 50) {
+        _loadMoreStatus = GXLoadMoreStatus.settling;
+      }
+      return;
+    }
+    if (_loadMoreStatus == GXLoadMoreStatus.settling) {
+      setState(() {
+        _loadMoreStatus = GXLoadMoreStatus.loading;
       });
-      if (widget.loadBuilder != null) {
-        widget.loadBuilder!(_future);
+    }
+    if (_scrollController.position.atEdge &&
+        _scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      if (_loadMoreStatus == GXLoadMoreStatus.idle) {
+        setState(() {
+          _loadMoreStatus = GXLoadMoreStatus.touching;
+          _bottomOffset = _scrollController.offset;
+        });
       }
     }
   }
 
-  List<Widget> buildList() {
-    List<Widget> ret = [];
-    for (int i = 0; i < _data.length; i++) {
-      Map<String,dynamic> item = _data[i];
-      GXWidgetSize widgetSize = widget.itemBuilder(context, item, i);
-      ret.add(widgetSize.child);
+  Future<void> _loadMore() async {
+    if (widget.start == 0) {
+      _data.clear();
     }
-    if (_loading) {
-      ret.add(SizedBox(height: 8));
-      ret.add(Center(
-        child: CircularProgressIndicator(),
-      ));
+    if (widget.onLoadMore != null) {
+      List data = await widget.onLoadMore!();
+      _data.addAll(data);
     }
-    return ret;
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.fastOutSlowIn,
+    );
+    setState(() {
+      _loadMoreStatus = GXLoadMoreStatus.idle;
+      _bottomOffset = 0;
+    });
   }
 }

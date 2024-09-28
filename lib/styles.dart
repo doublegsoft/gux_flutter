@@ -148,7 +148,7 @@ Widget buildTile(BuildContext context, {
   }
   if (description != '') {
     lines.add(Text(
-      description!,
+      description??'',
       style: TextStyle(fontSize: 14, color: colorTextSecondary),
     ),);
   } else if (descriptionWidget != null) {
