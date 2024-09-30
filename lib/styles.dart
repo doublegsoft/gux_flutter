@@ -35,6 +35,30 @@ Color get colorError {
   return Color(0xffd32f2f);
 }
 
+Color get colorSuccess {
+  return Color(0xff57B25A);
+}
+
+Color get colorSuccessLight {
+  return Color(0xffF1F9F1);
+}
+
+Color get colorWarning {
+  return Color(0xffFF780A);
+}
+
+Color get colorWarningLight {
+  return Color(0xffFFF4EB);
+}
+
+Color get colorInfo {
+  return Color(0xff4791C2);
+}
+
+Color get colorInfoLight {
+  return Color (0xffF0F6FA);
+}
+
 Color get colorDivider {
   return Color.fromRGBO(0, 0, 0, 0.4);
 }

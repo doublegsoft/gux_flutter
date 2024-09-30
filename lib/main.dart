@@ -92,7 +92,8 @@ class MainPageState extends State<MainPage> {
     return PopScope(
       canPop: false,
       child: Scaffold(
-        extendBodyBehindAppBar: false, // Extends the body behind the AppBar
+        backgroundColor: Colors.white,
+        extendBodyBehindAppBar: false,
         appBar: null,
         bottomNavigationBar: NavigationBar(
           onDestinationSelected: (int index) {
