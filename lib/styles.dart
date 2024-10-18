@@ -60,7 +60,7 @@ Color get colorInfoLight {
 }
 
 Color get colorDivider {
-  return Color.fromRGBO(0, 0, 0, 0.4);
+  return Color.fromRGBO(0, 0, 0, 0.1);
 }
 
 Color get colorSurface {

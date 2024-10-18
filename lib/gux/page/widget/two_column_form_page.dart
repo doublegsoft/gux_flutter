@@ -32,7 +32,9 @@ class TwoColumnFormPageState extends State<TwoColumnFormPage> {
         title: Text('编辑表单'),
       ),
       body: SingleChildScrollView(
-        child: styles.buildCard(
+        child: Container(
+          color: Colors.white,
+          padding: EdgeInsets.all(styles.padding),
           child: GXTwoColumnForm(
             fields: getFields(),
           ),
@@ -64,7 +66,7 @@ class TwoColumnFormPageState extends State<TwoColumnFormPage> {
     field = {};
     field["title"] = "手机";
     field["name"] = "mobile";
-    field["input"] = "text";
+    field["input"] = "mobile";
     ret.add(field);
 
     field = {};
@@ -103,11 +105,6 @@ class TwoColumnFormPageState extends State<TwoColumnFormPage> {
     ret.add(field);
 
     field = {};
-    field["title"] = "其他信息";
-    field["input"] = "title";
-    ret.add(field);
-
-    field = {};
     field["title"] = "宠物";
     field["name"] = "pet";
     field["input"] = "select";
@@ -126,6 +123,18 @@ class TwoColumnFormPageState extends State<TwoColumnFormPage> {
     field["title"] = "照片";
     field["name"] = "images";
     field["input"] = "images";
+    ret.add(field);
+
+    field = {};
+    field["title"] = "地址";
+    field["name"] = "address";
+    field["input"] = "longtext";
+    ret.add(field);
+
+    field = {};
+    field["title"] = "备注";
+    field["name"] = "note";
+    field["input"] = "longtext";
     ret.add(field);
 
     return ret;

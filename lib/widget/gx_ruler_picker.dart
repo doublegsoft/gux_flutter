@@ -60,79 +60,79 @@ class GXRulerPickerState extends State<GXRulerPicker> {
       }
     }
     return Container(
-        height: 192,
-        child: Column(
-          children: [
-            Container(
-              height: 48,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      GestureDetector(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: styles.padding),
-                          child: Text('清除', style: TextStyle(fontSize: 16, color: styles.colorError)),
-                        ),
-                        onTap: () {
-                          setState(() {
-                            widget.onValueChanged(double.infinity);
-                          });
-                          Navigator.pop(context);
-                        },
+      height: 192,
+      child: Column(
+        children: [
+          Container(
+            height: 48,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    GestureDetector(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: styles.padding),
+                        child: Text('清除', style: TextStyle(fontSize: 16, color: styles.colorError)),
                       ),
-                      GestureDetector(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: styles.padding),
-                          child: Text('取消', style: TextStyle(fontSize: 16, color: styles.colorError)),
-                        ),
-                        onTap: () {
-                          widget.onValueChanged(_oldValue);
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  ),
-                  Text(_value == double.infinity ? '' : _value.toInt().toString(),
-                    style: TextStyle(fontSize: 16, color: styles.colorTextPrimary)
-                  ),
-                  GestureDetector(
-                    child: Padding(
-                      padding: EdgeInsets.only(right: styles.padding),
-                      child: Text('确定', style: TextStyle(fontSize: 18, color: styles.colorPrimary)),
+                      onTap: () {
+                        setState(() {
+                          widget.onValueChanged(double.infinity);
+                        });
+                        Navigator.pop(context);
+                      },
                     ),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
+                    GestureDetector(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: styles.padding),
+                        child: Text('取消', style: TextStyle(fontSize: 16, color: styles.colorError)),
+                      ),
+                      onTap: () {
+                        widget.onValueChanged(_oldValue);
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                ),
+                Text(_value == double.infinity ? '' : _value.toInt().toString(),
+                  style: TextStyle(fontSize: 16, color: styles.colorTextPrimary)
+                ),
+                GestureDetector(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: styles.padding),
+                    child: Text('确定', style: TextStyle(fontSize: 16, color: styles.colorPrimary)),
                   ),
-                ],
-              ),
-            ),
-            RulerPicker(
-              controller: _controller,
-              onBuildRulerScaleText: (index, value) {
-                return value.toInt().toString();
-              },
-              ranges: [RulerRange(begin: widget.min, end: widget.max)],
-              scaleLineStyleList: const [
-                ScaleLineStyle(color: Colors.grey, width: 1.5, height: 30, scale: 0),
-                ScaleLineStyle(color: Colors.grey, width: 1, height: 25, scale: 5),
-                ScaleLineStyle(color: Colors.grey, width: 1, height: 15, scale: -1),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
               ],
-              onValueChanged: (value) {
-                setState(() {
-                  _value = value.toDouble();
-                });
-                widget.onValueChanged(value);
-              },
-              width: MediaQuery.of(context).size.width,
-              height: 80,
-              rulerMarginTop: 0,
             ),
-            Container(height: 64, color: Colors.white),
-          ],
-        )
+          ),
+          RulerPicker(
+            controller: _controller,
+            onBuildRulerScaleText: (index, value) {
+              return value.toInt().toString();
+            },
+            ranges: [RulerRange(begin: widget.min, end: widget.max)],
+            scaleLineStyleList: const [
+              ScaleLineStyle(color: Colors.grey, width: 1.5, height: 30, scale: 0),
+              ScaleLineStyle(color: Colors.grey, width: 1, height: 25, scale: 5),
+              ScaleLineStyle(color: Colors.grey, width: 1, height: 15, scale: -1),
+            ],
+            onValueChanged: (value) {
+              setState(() {
+                _value = value.toDouble();
+              });
+              widget.onValueChanged(value);
+            },
+            width: MediaQuery.of(context).size.width,
+            height: 80,
+            rulerMarginTop: 0,
+          ),
+          Container(height: 64, color: Colors.white),
+        ],
+      ),
     );
   }
 

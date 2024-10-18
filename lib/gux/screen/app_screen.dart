@@ -1,151 +1,73 @@
 import 'package:flutter/material.dart';
-import 'package:gux/styles.dart';
+import 'package:gux/gux/page/app/open_street_map_app.dart';
+import 'package:gux/gux/page/app/zuji_football_app.dart';
 
-import '../app/zuji/training/training_drill_content.dart';
-import '../app/zuji/training/training_plan_content.dart';
-
-import '../app/zuji/training/training_plan_summary.dart';
+import '/gux/page/app/trainimation_app.dart';
 import '/styles.dart' as styles;
 
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate({
-    required this.minHeight,
-    required this.maxHeight,
-    required this.child,
-  });
 
-  final double minHeight;
-  final double maxHeight;
-  final Widget child;
-
-  @override
-  double get minExtent => minHeight;
-
-  @override
-  double get maxExtent => maxHeight;
-
-  @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return SizedBox.expand(child: child);
-  }
-
-  @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return maxHeight != oldDelegate.maxHeight ||
-        minHeight != oldDelegate.minHeight ||
-        child != oldDelegate.child;
-  }
-}
 
 class AppScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text('👣'),
+        title: Text('应用'),
       ),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.only(left: styles.padding, right: styles.padding, top: styles.padding),
-              child: TrainingPlanSummary({}),
-            ),
-          ),
-          SliverPersistentHeader(
-            pinned: true, // 设置为 true 使标题栏固定在底部
-            delegate: _SliverAppBarDelegate(
-              minHeight: 32 + styles.padding * 2,
-              maxHeight: 32 + styles.padding * 2,
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: styles.padding),
-                height: 32 + styles.padding * 2,
-                color: Color(0xffffffff),
-                width: styles.screenWidth - styles.padding * 2,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    SizedBox(width: styles.padding),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(41),
-                        border: Border.all(
-                          color: Colors.black,
-                          width: 1.0,
-                        ),
-                      ),
-                      width: 82,
-                      height: 32,
-                      child: Center(child: Text('热身部分')),
-                    ),
-                    SizedBox(width: styles.padding),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(41),
-                        border: Border.all(
-                          color: Colors.black,
-                          width: 1.0,
-                        ),
-                      ),
-                      width: 82,
-                      height: 32,
-                      child: Center(child: Text('基础部分')),
-                    ),
-                    SizedBox(width: styles.padding),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(41),
-                        border: Border.all(
-                          color: Colors.black,
-                          width: 1.0,
-                        ),
-                      ),
-                      width: 82,
-                      height: 32,
-                      child: Center(child: Text('技术部分')),
-                    ),
-                    SizedBox(width: styles.padding),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(41),
-                        border: Border.all(
-                          color: Colors.black,
-                          width: 1.0,
-                        ),
-                      ),
-                      width: 82,
-                      height: 32,
-                      child: Center(child: Text('比赛部分')),
-                    ),
-                    SizedBox(width: styles.padding),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(41),
-                        border: Border.all(
-                          color: Colors.black,
-                          width: 1.0,
-                        ),
-                      ),
-                      width: 82,
-                      height: 32,
-                      child: Center(child: Text('放松部分')),
-                    ),
-                    SizedBox(width: styles.padding),
-                  ],
-                ),
-              ),
-            ),
+            child: _buildApp(context, '足迹 Football', 'asset/image/logo/zuji.png', () {
+              Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ZujiFootballApp()),
+              );
+            }),
           ),
           SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.only(left: styles.padding, right: styles.padding, bottom: styles.padding),
-              child: TrainingDrillContent({}, width: styles.screenWidth,),
-            ),
+            child: _buildApp(context, 'Open Street Map', 'asset/image/logo/openstreetmap.png', () {
+              Navigator.push(context,
+                MaterialPageRoute(builder: (context) => OpenStreetMapApp()),
+              );
+            }),
+          ),
+          SliverToBoxAdapter(
+            child: _buildApp(context, 'MacroFactor', 'asset/image/logo/macrofactor.png', () {
+              // Navigator.push(context,
+              //   MaterialPageRoute(builder: (context) => OpenStreetMapApp()),
+              // );
+            }),
+          ),
+          SliverToBoxAdapter(
+            child: _buildApp(context, 'Trainimation', 'asset/image/logo/trainimation.png', () {
+              Navigator.push(context,
+                MaterialPageRoute(builder: (context) => TrainimationApp()),
+              );
+            }),
           ),
         ],
       ),
     );
+  }
+  
+  Widget _buildApp(BuildContext context, String title, String icon, Function() onTap) {
+    return Column(
+      children: [
+        ListTile(
+          contentPadding: EdgeInsets.symmetric(vertical: styles.padding / 2, horizontal: styles.padding),
+          leading: Image.asset(icon, width: 36, height: 36, fit: BoxFit.cover,),
+          title: Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+          onTap: onTap,
+        ),
+        Container(
+          color: styles.colorDivider,
+          child: SizedBox(
+            height: 1,
+            width: styles.screenWidth * 0.88,
+          ),
+        ),
+      ],
+    );
+
   }
 }

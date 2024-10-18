@@ -5,10 +5,10 @@ This is a sub-project of GUX framework for dart language under flutter framework
 
 To learn more information about GUX framework please see other GUX projects for other languages.
 
-## Project Layout
+## Release
 
-```md
-follow the flutter project instruction
+```bash
+flutter run --release -d 7ead7295693d9c5bb0d4a0a06aafbea05c9e6592
 ```
 
 ## Screenshot

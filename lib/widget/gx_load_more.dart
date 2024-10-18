@@ -19,7 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:gux/styles.dart' as styles;
+import '/styles.dart' as styles;
 
 enum GXLoadMoreStatus {
 

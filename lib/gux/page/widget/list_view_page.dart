@@ -13,18 +13,14 @@
 ** ─██████████████─██████████████─████████──████████─
 ** ──────────────────────────────────────────────────
 */
-import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:table_calendar/table_calendar.dart';
-
-import 'package:gux/widget/gx_grid_view.dart';
-import 'package:gux/widget/gx_widget_size.dart';
 import 'package:gux/widget/gx_list_view.dart';
+import 'package:gux/widget/gx_widget_size.dart';
+import 'package:gux/widget/gx_pull_to_refresh.dart';
 
-import '../../widget/gx_pull_to_refresh.dart';
 import "/styles.dart" as styles;
+
 
 class ListViewPage extends StatefulWidget {
   @override
@@ -53,14 +49,20 @@ class ListViewState extends State<ListViewPage> {
             _start = -1 /* refresh */;
           });
         },
-        title: '正在刷新数据...',
+        title: '', // 正在刷新数据...
         height: 160,
-        image: Text('X', style: TextStyle(fontSize: 16, color: Colors.white)),
+        image: Image.asset('asset/image/common/loading.gif', width: 150, height: 105, fit: BoxFit.cover),
         foregroundColor: Colors.white,
         backgroundColor: Colors.black,
         body: GXListView(
           start: _start,
           onLoadMore: fetchData,
+          widgetLoadMore: Container(
+            height: 150,
+            child: Center(
+              child: Image.asset('asset/image/common/loading.gif', width: 150, height: 105, fit: BoxFit.cover),
+            ),
+          ),
           itemBuilder: (context, item, columnIndex) {
             return GXWidgetSize(
               height: 120,
@@ -162,7 +164,6 @@ class ListViewState extends State<ListViewPage> {
 
   Future<List<Map<String,dynamic>>> fetchData() async {
     await Future.delayed(Duration(seconds: 1));
-    print('fetchData start = $_start');
     if (_start == -1) {
       _start = 0;
     }

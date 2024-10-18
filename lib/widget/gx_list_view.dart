@@ -33,13 +33,16 @@ class GXListView extends StatefulWidget {
 
   final LoadMoreCallback? onLoadMore;
 
+  final Widget? widgetLoadMore;
+
   final int start;
 
   const GXListView({
     Key? key,
     required this.start,
     required ColumIndexedWidgetBuilder this.itemBuilder,
-    LoadMoreCallback? this.onLoadMore,
+    this.onLoadMore,
+    this.widgetLoadMore,
   }) : super(key: key);
 
   @override
@@ -102,10 +105,7 @@ class GXListViewState extends State<GXListView> {
             builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: styles.padding),
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
+                  child: Container(),
                 );
               } else if (snapshot.hasError) {
                 return SliverToBoxAdapter(
@@ -124,10 +124,7 @@ class GXListViewState extends State<GXListView> {
             },
           ),
           if (_loadMoreStatus == GXLoadMoreStatus.loading) SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.only(top: styles.padding),
-              child: Center(child: CircularProgressIndicator()),
-            ),
+            child: widget.widgetLoadMore,
           ),
         ],
       ),

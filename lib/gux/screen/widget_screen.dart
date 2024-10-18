@@ -1,14 +1,14 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
-import '/gux/page/bar_chart_page.dart';
-import '/gux/page/line_chart_page.dart';
-import '/gux/page/list_view_page.dart';
-import '/gux/page/tabs_page.dart';
-import '/gux/page/common_page.dart';
-import '/gux/page/grid_view_page.dart';
-import '/gux/page/calendar_page.dart';
-import '/gux/page/two_column_form_page.dart';
+import '/gux/page/widget/bar_chart_page.dart';
+import '/gux/page/widget/line_chart_page.dart';
+import '/gux/page/widget/list_view_page.dart';
+import '/gux/page/widget/tabs_page.dart';
+import '/gux/page/widget/common_page.dart';
+import '/gux/page/widget/grid_view_page.dart';
+import '/gux/page/widget/calendar_page.dart';
+import '/gux/page/widget/two_column_form_page.dart';
 
 import '../sdk.dart' as sdk;
 

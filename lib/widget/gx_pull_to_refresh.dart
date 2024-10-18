@@ -18,7 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:gux/styles.dart' as styles;
+import '/styles.dart' as styles;
 
 class GXPullToRefresh extends StatefulWidget {
 
@@ -74,19 +74,10 @@ class GXPullToRefreshState extends State<GXPullToRefresh> with SingleTickerProvi
     _height = widget.height ?? 200;
     _backgroundColor = widget.backgroundColor ?? Colors.transparent;
     _foregroundColor = widget.foregroundColor ?? styles.colorTextPrimary;
-
-    _controller = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    );
-    _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
-
-    _controller.repeat();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
     super.dispose();
   }
 
@@ -132,21 +123,8 @@ class GXPullToRefreshState extends State<GXPullToRefresh> with SingleTickerProvi
   }
 
   Widget _buildTitledProgressIndicator() {
-    return Container(
-      height: 32,
-      width: widget.title.length * 16 + 32,
-      child: Row(
-        children: [
-          RotationTransition(
-            turns: _animation,
-            child: widget.image,
-          ),
-          SizedBox(width: 16),
-          Text(widget.title,
-            style: TextStyle(fontSize: 16, color: _foregroundColor),
-          ),
-        ],
-      ),
+    return Center(
+      child: widget.image,
     );
   }
 }
