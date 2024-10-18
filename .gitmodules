@@ -1,5 +1,3 @@
-g2d_flutter:
-  path: mod/g2d_flutter
-  git:
-    url: git@github.com:doublegsoft/g2d_flutter.git
-    ref: main
+[submodule "mod/g2d_flutter"]
+  path = mod/g2d_flutter
+  url = git@github.com:doublegsoft/g2d_flutter.git
