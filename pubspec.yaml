@@ -1,6 +1,9 @@
 name: gux
 description: flutter gux framework
 
+g2d_flutter:
+  path: mod/g2d_flutter
+
 publish_to: 'none'
 
 version: 1.0.0+1

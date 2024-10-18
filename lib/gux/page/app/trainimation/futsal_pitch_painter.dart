@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:g2d_flutter/common/g2d.dart';
 
 import 'model/poco.dart';
 
@@ -19,6 +20,8 @@ class FutsalPitchPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     print(elapsed);
+
+
     final paint = Paint()
       ..color = Colors.white
       ..strokeWidth = WIDTH_LINE
