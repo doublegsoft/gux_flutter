@@ -1,7 +1,6 @@
-
 import 'package:flutter/material.dart';
-import 'package:gux/widget/gx_bottom_picker.dart';
 
+import 'bottom_picker.dart';
 import 'datetime_picker.dart';
 import 'ruler_picker.dart';
 import '/sdk/options.dart';
@@ -62,14 +61,14 @@ void pickOption(BuildContext context, {
     shape: const RoundedRectangleBorder(  // Rounded corners
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
-    builder: (_) => GXBottomPicker(
-      options: options.map<GXBottomPickerOption>((opt) => GXBottomPickerOption(
+    builder: (_) => BottomPicker(
+      options: options.map<BottomPickerOption>((opt) => BottomPickerOption(
         value: opt.value,
         label: opt.text,
       )).toList(),
       value: '',
       onSelected: (option) {
-        if (option == GXBottomPickerOption.NONE) {
+        if (option == BottomPickerOption.NONE) {
           if (onSelected != null) {
             onSelected(null);
           }
