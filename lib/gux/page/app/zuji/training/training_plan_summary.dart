@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import '/styles.dart' as styles;
+import '../../../../../design/styles.dart' as styles;
 
 class TrainingPlanSummary extends StatefulWidget {
 

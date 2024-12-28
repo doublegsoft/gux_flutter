@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import '/styles.dart' as styles;
+import '../../../../../design/styles.dart' as styles;
 
 const Color COLOR_LABEL_BACKGROUND = Color(0xfff7f2f7);
 

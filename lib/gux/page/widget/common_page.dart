@@ -28,7 +28,7 @@ import '/gux/common/under_construction_page.dart';
 import '/gux/common/article_page.dart';
 import '/gux/common/failure_page.dart';
 import '/gux/common/success_page.dart';
-import '/styles.dart' as styles;
+import '../../../design/styles.dart' as styles;
 
 class CommonPage extends StatefulWidget {
   @override

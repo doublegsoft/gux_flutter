@@ -1,8 +1,9 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gux/design/buttons.dart';
 
-import '/styles.dart' as styles;
+import '../design/styles.dart' as styles;
 
 enum GXDateTimePickerMode {
   date,
@@ -60,68 +61,48 @@ class GXDateTimePickerState extends State<GXDateTimePicker> {
     return Container(
       height: 300,
       decoration: BoxDecoration(
-        // color: widget.backgroundColor,
+        color: Colors.white,
         borderRadius: const BorderRadius.only(
           topRight: Radius.circular(20),
           topLeft: Radius.circular(20),
         ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Container(
-              height: 48,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      GestureDetector(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: styles.padding),
-                          child: Text('清除', style: TextStyle(fontSize: 16, color: styles.colorError)),
-                        ),
-                        onTap: () {
-                          widget.onSelected(null);
-                          Navigator.pop(context);
-                        },
-                      ),
-                      GestureDetector(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: styles.padding),
-                          child: Text('取消', style: TextStyle(fontSize: 16, color: styles.colorError)),
-                        ),
-                        onTap: () {
-                          if (_oldValue != null) {
-                            widget.onSelected(_oldValue!);
-                          }
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  ),
-                  Text('',
-                      style: TextStyle(fontSize: 16, color: styles.colorTextPrimary)
-                  ),
-                  GestureDetector(
-                    child: Padding(
-                      padding: EdgeInsets.only(right: styles.padding),
-                      child: Text('确定', style: TextStyle(fontSize: 16, color: styles.colorPrimary)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            height: 48,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    SizedBox(width: 10,),
+                    CloseIconButton(),
+                    SizedBox(width: 20,),
+                    ClearIconButton(
+                      didTap: () {
+                        widget.onSelected(null);
+                        Navigator.pop(context);
+                      },
                     ),
-                    onTap: () {
-                      widget.onSelected(_newValue);
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              ),
+                  ],
+                ),
+                Spacer(),
+                ConfirmIconButton(
+                  didTap: () {
+                    widget.onSelected(_newValue);
+                    Navigator.pop(context);
+                  },
+                ),
+                SizedBox(width: 10,),
+              ],
             ),
-            Expanded(
-              child: _buildDatePicker(context),
-            ),
-          ],
-        ),
+          ),
+          Expanded(
+            child: widget.mode == GXDateTimePickerMode.date ? _buildDatePicker(context) : _buildTimePicker(context),
+          ),
+        ],
       ),
     );
   }
@@ -129,6 +110,22 @@ class GXDateTimePickerState extends State<GXDateTimePicker> {
   Widget _buildDatePicker(BuildContext context) {
     return CupertinoDatePicker(
       mode: CupertinoDatePickerMode.date,
+      onDateTimeChanged: (val) {
+        setState(() {
+          _newValue = val;
+        });
+      },
+      initialDateTime: _newValue,
+      maximumDate: DateTime(2099),
+      minimumDate: DateTime(1800),
+      dateOrder: DatePickerDateOrder.ymd,
+    );
+  }
+
+  Widget _buildTimePicker(BuildContext context) {
+    return CupertinoDatePicker(
+      mode: CupertinoDatePickerMode.time,
+      use24hFormat: true,
       onDateTimeChanged: (val) {
         setState(() {
           _newValue = val;

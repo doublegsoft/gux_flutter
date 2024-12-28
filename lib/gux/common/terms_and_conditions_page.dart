@@ -16,7 +16,7 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '/styles.dart' as styles;
+import '../../design/styles.dart' as styles;
 
 class TermsAndConditionsPage extends StatefulWidget {
   @override

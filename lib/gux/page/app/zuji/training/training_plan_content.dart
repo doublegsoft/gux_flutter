@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'training_drill_content.dart';
 import 'training_plan_summary.dart';
 
-import '/styles.dart' as styles;
+import '../../../../../design/styles.dart' as styles;
 
 class TrainingPlanContent extends StatefulWidget {
 

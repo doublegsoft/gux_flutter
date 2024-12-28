@@ -14,6 +14,7 @@
 ** ──────────────────────────────────────────────────
 */
 import 'package:flutter/material.dart';
+import 'package:gux/design/buttons.dart';
 
 import '/main.dart';
 
@@ -22,11 +23,17 @@ class WelcomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [Colors.lightBlueAccent.withOpacity(0.2), Colors.lightBlueAccent.withOpacity(0.8)],
+          ),
+          image: DecorationImage(
+            image: AssetImage('asset/image/welcome.png',),
+            fit: BoxFit.cover,
           ),
         ),
         child: Center(
@@ -52,11 +59,12 @@ class WelcomePage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 40.0),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/main',);
-                },
-                child: Text('开始使用'),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16,),
+                child: RoundedButton(
+                  text: '开始使用',
+                  onPressed: () => Navigator.pushNamed(context, '/main',),
+                ),
               ),
             ],
           ),

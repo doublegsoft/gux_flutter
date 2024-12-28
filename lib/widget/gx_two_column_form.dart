@@ -22,12 +22,15 @@ import 'package:gux/widget/gx_datetime_picker.dart';
 import 'package:gux/widget/gx_ruler_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:photo_view/photo_view.dart';
 
 
-import '/styles.dart' as styles;
+import '../design/styles.dart' as styles;
 import 'gx_bottom_picker.dart';
 
 const PADDING = 8.0;
+
+const PADDING_ROW_TOP = 16.0;
 
 class AlwaysDisabledFocusNode extends FocusNode {
   @override
@@ -61,6 +64,8 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
 
   final TextEditingController _controllerForText = TextEditingController();
 
+  late bool _readonly;
+
   late dynamic _focusField;
 
   final FocusNode _focusNode = FocusNode();
@@ -68,10 +73,15 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
   @override
   void initState() {
     super.initState();
+    _readonly = widget.readonly;
     widget.fields.forEach((field) {
       if (field['input'] == 'ruler') {
         _controllers[field['name']] = RulerPickerController();
         _values[field['name']] = field['value']??double.infinity;
+      } else {
+        if (field['name'] != null) {
+          _values[field['name']] = field['value'];
+        }
       }
     });
   }
@@ -115,12 +125,11 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
   ///
   /// Builds label and input row one by one in form.
   ///
-  ///
   List<Widget> _buildFieldRows() {
     List<Widget> ret = [];
     widget.fields.forEach((field) {
       Widget widget = Padding(
-        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: PADDING),
+        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: PADDING / 2),
         child: _buildFieldRow(field),
       );
       ret.add(widget);
@@ -152,29 +161,44 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
             backgroundImage: image,
           ),
           onTap: () {
+            if (_readonly) {
+              return;
+            }
             _pickImageSource(context, field['name']);
           },
         ),
       );
     } else {
-      double top = 14;
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: widget.labelWidth.toDouble(),
-            child: Container(
-              padding: EdgeInsets.only(top: top,),
-              child: Text(
-                (field['title'] as String) + '：',
-                style: TextStyle(fontSize: 16),
-                textAlign: TextAlign.left,
-              ),),
+      double bot = 11;
+      return Container(
+        constraints: BoxConstraints(
+          minHeight: 56, // Minimum height
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: widget.labelWidth.toDouble(),
+              padding: EdgeInsets.only(bottom: bot,),
+              child: Container(
+                padding: EdgeInsets.only(top: PADDING_ROW_TOP,),
+                child: Text(
+                  (field['title'] as String) + '：',
+                  style: TextStyle(fontSize: 16),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+            ),
+            Expanded(
+              child: _buildFieldWidget(field),
+            ),
+          ],
+        ),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: styles.colorDivider, width: 1.0),
           ),
-          Expanded(
-            child: _buildFieldWidget(field),
-          ),
-        ],
+        ),
       );
     }
   }
@@ -255,15 +279,17 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
   */
   Future<void> _pickImage(ImageSource source, String name) async {
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: source);
+    final pickedFiles = await picker.pickMultiImage(limit: 9);
     setState(() {
-      if (pickedFile != null) {
+      if (pickedFiles != null  && pickedFiles.length > 0) {
         if (_values[name] == null) {
           _values[name] = [];
         }
-        _values[name].add({
-          'path': pickedFile.path,
-        });
+        for (final pickedFile in pickedFiles) {
+          _values[name].add({
+            'path': pickedFile.path,
+          });
+        }
       }
     });
   }
@@ -314,30 +340,9 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Container(
-            width: double.infinity,
-            height: 400,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-                    child: Image.file(
-                      File(image['path']),
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text('关闭'),
-                  ),
-                ),
-              ],
+          child: PhotoView(
+            imageProvider: FileImage(
+              File(image['path']),
             ),
           ),
         );
@@ -360,14 +365,6 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
     return LayoutBuilder(builder: (context, constraints) {
       double width = constraints.maxWidth;
       return Container(
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: styles.colorDivider,
-              width: 1.0,
-            ),
-          ),
-        ),
         padding: EdgeInsets.symmetric(vertical: PADDING),
         height: ((width - 16) / 3) * (((images.length + 1) / 3).toInt() + 1) + ((images.length + 1) / 3).toInt() * 8 + 16 + 1,
         child: GridView.builder(
@@ -380,8 +377,14 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
           itemCount: images.length + 1,
           itemBuilder: (BuildContext context, int index) {
             if (index == images.length) {
+              if (_readonly) {
+                return null;
+              }
               return GestureDetector(
                 onTap: () {
+                  if (_readonly) {
+                    return;
+                  }
                   _pickImageSource(context, name);
                 },
                 child: Image.asset(
@@ -423,18 +426,10 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
     List values = options['values'];
     List<Widget> items = [];
     for (int i = 0; i < values.length; i++) {
-      items.add(buildWidgetForSegmentItem(name, values[i]['value'], values[i]['text'], i, values.length));
+      items.add(_buildWidgetForSegmentItem(name, values[i]['value'], values[i]['text'], i, values.length));
     }
     return Container(
-      padding: EdgeInsets.only(top: PADDING, bottom: PADDING),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: styles.colorDivider,
-            width: 1.0,
-          ),
-        ),
-      ),
+      padding: EdgeInsets.only(top: PADDING, bottom: PADDING - 2),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: items,
@@ -442,9 +437,12 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
     );
   }
 
-  Widget buildWidgetForSegmentItem(String name, String value, String text, int index, int count) {
+  Widget _buildWidgetForSegmentItem(String name, String value, String text, int index, int count) {
     return InkWell(
       onTap: () {
+        if (_readonly) {
+          return;
+        }
         setState(() {
           _values[name] = value;
         });
@@ -520,19 +518,22 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
     return Container(
       child: ListTile(
         dense: true,
-        contentPadding: EdgeInsets.only(bottom: 0, left: PADDING, right: PADDING / 2),
-        title: Text((_values[name] == double.infinity ? '请选择...' : _values[name].toInt()).toString(),
+        contentPadding: EdgeInsets.only(bottom: 0, left: PADDING, right: PADDING / 2, top: 3,),
+        title: Text((_values[name] == double.infinity ? _emptyOrPlaceholder('请选择...') : _values[name].toInt()).toString(),
           style: TextStyle(fontSize: 16, color: _values[name] == double.infinity ? styles.colorTextPlaceholder : styles.colorTextPrimary),
         ),
         trailing: field['unit'] != null ? Text(field['unit']) : null,
         onTap: () {
+          if (_readonly) {
+            return;
+          }
           showModalBottomSheet<void>(
             context: context,
             builder: (BuildContext context) {
               return GXRulerPicker(
                 max: field['range'][1],
                 min: field['range'][0],
-                value: _values[name],
+                value: _values[name].toDouble(),
                 onValueChanged: (value) {
                   setState(() {
                     _values[name] = value.toDouble();
@@ -542,14 +543,6 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
             },
           );
         },
-      ),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: styles.colorDivider,
-            width: 1.0, // Width of the bottom border
-          ),
-        ),
       ),
     );
   }
@@ -563,11 +556,14 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
     return Container(
       child: ListTile(
         dense: true,
-        contentPadding: EdgeInsets.only(bottom: 0, left: PADDING, right: PADDING / 2),
-        title: Text(((_values[field['name']]??'') == '' ? '请选择...' : _values[field['name'] + '_text']),
+        contentPadding: EdgeInsets.only(bottom: 0, left: PADDING, right: PADDING / 2, top: 3,),
+        title: Text(((_values[field['name']]??'') == '' ? _emptyOrPlaceholder('请选择...') : _values[field['name'] + '_text']),
           style: TextStyle(fontSize: 16, color: (_values[field['name']]??'') == '' ? styles.colorTextPlaceholder : styles.colorTextPrimary),
         ),
         onTap: () {
+          if (_readonly) {
+            return;
+          }
           showModalBottomSheet(
             context: context,
             builder: (_) => GXBottomPicker(
@@ -585,15 +581,7 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
             ),
           );
         },
-        trailing: Icon(Icons.keyboard_arrow_down, size: 22),
-      ),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: styles.colorDivider,
-            width: 1.0, // Width of the bottom border
-          ),
-        ),
+        trailing: _readonly ? null : Icon(Icons.keyboard_arrow_down, size: 22),
       ),
     );
   }
@@ -607,22 +595,17 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
     return Container(
       child: ListTile(
         dense: true,
-        contentPadding: EdgeInsets.only(bottom: 0, left: PADDING, right: PADDING),
-        title: Text((_values[field['name']] == null ? '请选择...' : DateFormat('yyyy-MM-dd').format(_values[field['name']])),
+        contentPadding: EdgeInsets.only(bottom: 0, left: PADDING, right: PADDING, top: 3),
+        title: Text((_values[field['name']] == null ? _emptyOrPlaceholder('请选择...') : DateFormat('yyyy-MM-dd').format(_values[field['name']])),
           style: TextStyle(fontSize: 16, color: _values[field['name']] == null ? styles.colorTextPlaceholder : styles.colorTextPrimary),
         ),
         onTap: () {
+          if (_readonly) {
+            return;
+          }
           _pickDate(context, field['name'], field['title']);
         },
         trailing: Icon(Icons.calendar_today, size: 16),
-      ),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: styles.colorDivider,
-            width: 1.0, // Width of the bottom border
-          ),
-        ),
       ),
     );
   }
@@ -636,12 +619,17 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
     return Container(
       child: ListTile(
         dense: true,
-        contentPadding: EdgeInsets.only(bottom: 0, left: PADDING, right: PADDING),
-        title: Text((_values[field['name']]??'') == '' ? '请填写' : _values[field['name']],
+        contentPadding: EdgeInsets.only(bottom: 0, left: PADDING, right: PADDING, top: 3),
+        title: Text((_values[field['name']]??'') == '' ? _emptyOrPlaceholder('请填写') : _values[field['name']],
           style: TextStyle(fontSize: 16, color: (_values[field['name']]??'') == '' ? styles.colorTextPlaceholder : styles.colorTextPrimary),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
         ),
         onTap: () {
           FocusScope.of(context).unfocus();
+          if (_readonly) {
+            return;
+          }
           showModalBottomSheet(
             isScrollControlled: true,
             context: context,
@@ -661,14 +649,6 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
           );
         },
       ),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: styles.colorDivider,
-            width: 1.0, // Width of the bottom border
-          ),
-        ),
-      ),
     );
   }
 
@@ -681,12 +661,17 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
     return Container(
       child: ListTile(
         dense: true,
-        contentPadding: EdgeInsets.only(bottom: 0, left: PADDING, right: PADDING),
-        title: Text((_values[field['name']]??'') == '' ? '请填写' : _values[field['name']],
+        contentPadding: EdgeInsets.only(bottom: 0, left: PADDING, right: PADDING, top: 3),
+        title: Text((_values[field['name']]??'') == '' ? _emptyOrPlaceholder('请填写') : _values[field['name']],
           style: TextStyle(fontSize: 16, color: (_values[field['name']]??'') == '' ? styles.colorTextPlaceholder : styles.colorTextPrimary),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
         ),
         onTap: () {
           FocusScope.of(context).unfocus();
+          if (_readonly) {
+            return;
+          }
           showModalBottomSheet(
               isScrollControlled: true,
               context: context,
@@ -706,19 +691,10 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
           );
         },
       ),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: styles.colorDivider,
-            width: 1.0, // Width of the bottom border
-          ),
-        ),
-      ),
     );
   }
 
   Widget _buildTextInput(dynamic field) {
-    // print(MediaQuery.of(context).viewInsets.bottom);
     String name = field['name'];
     if (_values[name] != null) {
       _controllerForText.text = _values[name];
@@ -817,5 +793,12 @@ class GXTwoColumnFormState extends State<GXTwoColumnForm> {
         ],
       ),
     );
+  }
+
+  String _emptyOrPlaceholder(String placeholder) {
+    if (_readonly) {
+      return '';
+    }
+    return placeholder;
   }
 }

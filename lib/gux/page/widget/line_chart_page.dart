@@ -15,6 +15,8 @@
 */
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:gux/widget/gx_circular_progress.dart';
+import 'package:gux/widget/gx_pulse_loader.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -22,7 +24,7 @@ import 'package:gux/widget/gx_grid_view.dart';
 import 'package:gux/widget/gx_widget_size.dart';
 import 'package:gux/widget/gx_list_view.dart';
 
-import "/styles.dart" as styles;
+import "../../../design/styles.dart" as styles;
 
 class LineChartPage extends StatefulWidget {
   @override
@@ -144,6 +146,12 @@ class LineChartState extends State<LineChartPage> {
                 ),
               ),
             ),
+            // GXPulseLoader(
+            //   color: Colors.purple,
+            //   size: 80,
+            //   duration: const Duration(milliseconds: 2000),
+            //   particleCount: 4,
+            // ),
           ],
         ),
       ),

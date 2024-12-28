@@ -16,7 +16,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ruler_picker/flutter_ruler_picker.dart';
 
-import '/styles.dart' as styles;
+import '../design/buttons.dart';
+import '../design/styles.dart' as styles;
 
 class GXRulerPicker extends StatefulWidget {
 
@@ -70,42 +71,24 @@ class GXRulerPickerState extends State<GXRulerPicker> {
               children: [
                 Row(
                   children: [
-                    GestureDetector(
-                      child: Padding(
-                        padding: EdgeInsets.only(left: styles.padding),
-                        child: Text('清除', style: TextStyle(fontSize: 16, color: styles.colorError)),
-                      ),
-                      onTap: () {
-                        setState(() {
-                          widget.onValueChanged(double.infinity);
-                        });
-                        Navigator.pop(context);
-                      },
-                    ),
-                    GestureDetector(
-                      child: Padding(
-                        padding: EdgeInsets.only(left: styles.padding),
-                        child: Text('取消', style: TextStyle(fontSize: 16, color: styles.colorError)),
-                      ),
-                      onTap: () {
-                        widget.onValueChanged(_oldValue);
+                    SizedBox(width: 10,),
+                    CloseIconButton(),
+                    SizedBox(width: 20,),
+                    ClearIconButton(
+                      didTap: () {
+                        widget.onValueChanged(double.infinity);
                         Navigator.pop(context);
                       },
                     ),
                   ],
                 ),
-                Text(_value == double.infinity ? '' : _value.toInt().toString(),
-                  style: TextStyle(fontSize: 16, color: styles.colorTextPrimary)
-                ),
-                GestureDetector(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: styles.padding),
-                    child: Text('确定', style: TextStyle(fontSize: 16, color: styles.colorPrimary)),
-                  ),
-                  onTap: () {
+                Spacer(),
+                ConfirmIconButton(
+                  didTap: () {
                     Navigator.pop(context);
                   },
                 ),
+                SizedBox(width: 10,),
               ],
             ),
           ),

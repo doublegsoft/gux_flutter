@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.gux_flutter">
+    package="ui.doublegsoft.gux">
 
   <application
       android:name="${applicationName}"

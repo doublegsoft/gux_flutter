@@ -1,6 +1,14 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gux/gux/bloc/list_bloc.dart';
+import 'package:gux/gux/page/widget/card_page.dart';
+import 'package:gux/gux/page/widget/design_system_page.dart';
+import 'package:gux/gux/page/widget/free_page.dart';
+import 'package:gux/gux/page/widget/readonly_from_page.dart';
+import 'package:gux/widget/gx_page_visibility_mixin.dart';
 
+import '../bloc/form_bloc.dart';
 import '/gux/page/widget/bar_chart_page.dart';
 import '/gux/page/widget/line_chart_page.dart';
 import '/gux/page/widget/list_view_page.dart';
@@ -12,92 +20,117 @@ import '/gux/page/widget/two_column_form_page.dart';
 
 import '../sdk.dart' as sdk;
 
-class WidgetScreen extends StatelessWidget {
+class WidgetScreen extends StatefulWidget {
+
+  @override
+  State<StatefulWidget> createState() => WidgetScreenState();
+
+}
+
+class WidgetScreenState extends State<WidgetScreen> with GXPageVisibilityMixin {
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         children: [
-          FutureBuilder(
-            future: sdk.fetchApplicationAdvertisements({}),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasData) {
-                return CarouselSlider(
-                  options: CarouselOptions(
-                    height: 240.0,
-                    viewportFraction: 1.0,
-                    autoPlay: true,
-                  ),
-                  items: snapshot.data!.map((item) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 240,
-                          child: FittedBox(
-                            fit: BoxFit.fill,
-                            child: Image.network(item['imagePath']),
-                          ),
-                        );
-                      },
-                    );
-                  }).toList(),
-                );
-              }
-              return Container(
-                height: 240,
-              );
-            },
-          ),
-          SizedBox(height: 8),
-          FutureBuilder(
-            future: sdk.fetchApplicationNotifications({}),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasData) {
-                return Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 16),
-                      child: Text(
-                        '\ue612',
-                        style: TextStyle(
-                          fontFamily: 'gx-iconfont',
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-
-                    Expanded(
-                      child: CarouselSlider(
-                        options: CarouselOptions(
-                          scrollDirection: Axis.vertical,
-                          height: 20.0,
-                          viewportFraction: 1.0,
-                          autoPlay: true,
-                        ),
-                        items: snapshot.data!.map((item) {
-                          return Builder(
-                            builder: (BuildContext context) {
-                              return Container(
-                                height: 20,
-                                padding: EdgeInsets.only(left: 8, right: 16),
-                                child: Text(item["content"]),
-                              );
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ],
-                );
-              }
-              return Container(
-                height: 20,
+          // FutureBuilder(
+          //   future: sdk.fetchApplicationAdvertisements({}),
+          //   builder: (context, snapshot) {
+          //     if (snapshot.connectionState == ConnectionState.waiting) {
+          //       return Container(
+          //         height: 240,
+          //         child: Center(child: CircularProgressIndicator()),
+          //       );
+          //     } else if (snapshot.hasData) {
+          //       return CarouselSlider(
+          //         options: CarouselOptions(
+          //           height: 240.0,
+          //           viewportFraction: 1.0,
+          //           autoPlay: true,
+          //         ),
+          //         items: snapshot.data!.map((item) {
+          //           return Builder(
+          //             builder: (BuildContext context) {
+          //               return Container(
+          //                 width: MediaQuery.of(context).size.width,
+          //                 height: 240,
+          //                 child: FittedBox(
+          //                   fit: BoxFit.fill,
+          //                   child: Image.network(item['imagePath']),
+          //                 ),
+          //               );
+          //             },
+          //           );
+          //         }).toList(),
+          //       );
+          //     }
+          //     return Container(
+          //       height: 240,
+          //     );
+          //   },
+          // ),
+          // SizedBox(height: 8),
+          // FutureBuilder(
+          //   future: sdk.fetchApplicationNotifications({}),
+          //   builder: (context, snapshot) {
+          //     if (snapshot.connectionState == ConnectionState.waiting) {
+          //       // return Center(child: CircularProgressIndicator());
+          //       return Container(height: 20,);
+          //     } else if (snapshot.hasData) {
+          //       return Row(
+          //         children: [
+          //           Padding(
+          //             padding: EdgeInsets.only(left: 16),
+          //             child: Text(
+          //               '\ue612',
+          //               style: TextStyle(
+          //                 fontFamily: 'gx-iconfont',
+          //                 fontSize: 18,
+          //                 fontWeight: FontWeight.bold,
+          //               ),
+          //             ),
+          //           ),
+          //           Expanded(
+          //             child: CarouselSlider(
+          //               options: CarouselOptions(
+          //                 scrollDirection: Axis.vertical,
+          //                 height: 20.0,
+          //                 viewportFraction: 1.0,
+          //                 autoPlay: true,
+          //               ),
+          //               items: snapshot.data!.map((item) {
+          //                 return Builder(
+          //                   builder: (BuildContext context) {
+          //                     return Container(
+          //                       height: 20,
+          //                       padding: EdgeInsets.only(left: 8, right: 16),
+          //                       child: Text(item["content"]),
+          //                     );
+          //                   },
+          //                 );
+          //               }).toList(),
+          //             ),
+          //           ),
+          //         ],
+          //       );
+          //     }
+          //     return Container(
+          //       height: 20,
+          //     );
+          //   },
+          // ),
+          SizedBox(height: 64,),
+          buildCard4Widget(
+            context: context,
+            title: '设计系统',
+            description: '设计系统提供了构建应用程序的基础设计规范和组件，可以在此基础上做调整一适应更多的应用设计。',
+            imagePath: 'asset/image/widget/design_system.png',
+            onPressed: () async {
+              context.read<FormBloc>().add(FormReadEvent());
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DesignSystemPage()),
               );
             },
           ),
@@ -106,8 +139,9 @@ class WidgetScreen extends StatelessWidget {
             title: '编辑表单',
             description: '编辑表单提供用户输入信息的部件，存在单列式和两列式两种编辑表单展现形式。',
             imagePath: 'asset/image/widget/editable_form.png',
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async {
+              context.read<FormBloc>().add(FormReadEvent());
+              await Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => TwoColumnFormPage()),
               );
@@ -118,7 +152,12 @@ class WidgetScreen extends StatelessWidget {
             title: '只读表单',
             description: '只读表单提供展现用户输入信息的部件，不可编辑，和编辑表单一样也存在单列式和两列式两种展现形式。',
             imagePath: 'asset/image/widget/readonly_form.png',
-            onPressed: () {
+            onPressed: () async {
+              context.read<FormBloc>().add(FormReadEvent());
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ReadonlyFromPage()),
+              );
             },
           ),
           buildCard4Widget(
@@ -127,6 +166,7 @@ class WidgetScreen extends StatelessWidget {
             description: '传统列表以瓦片的形式单列竖式展示集合内容，是应用程序最为常用的集合内容展现部件。',
             imagePath: 'asset/image/widget/list_view.png',
             onPressed: () {
+              context.read<ListBloc>().add(ListLoadEvent());
               Navigator.push(context,
                 MaterialPageRoute(builder: (context) => ListViewPage()),
               );
@@ -201,6 +241,30 @@ class WidgetScreen extends StatelessWidget {
               );
             },
           ),
+          buildCard4Widget(
+            context: context,
+            title: '卡片设计',
+            description: '卡片设计提供各式各样的在应用程序中会使用到的卡片素材。',
+            imagePath: 'asset/image/widget/card.png',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CardPage()),
+              );
+            },
+          ),
+          buildCard4Widget(
+            context: context,
+            title: '自由测试',
+            description: '复制粘贴代码快速测试页面。',
+            imagePath: 'asset/image/widget/free_page.png',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => FreePage()),
+              );
+            },
+          ),
         ],
       ),
     );
@@ -267,5 +331,10 @@ class WidgetScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void onPageVisible() {
+    // print('WidgetScreen');
   }
 }

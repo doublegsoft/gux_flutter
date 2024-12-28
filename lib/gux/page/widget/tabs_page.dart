@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../../design/Tag.dart';
+import '../../../design/avatars.dart';
+import '/design/avatar.dart';
 import '/widget/gx_tab_item.dart';
 
-import '/styles.dart' as styles;
+import '../../../design/styles.dart' as styles;
 
 class TabsPage extends StatelessWidget {
   const TabsPage({super.key});
@@ -65,21 +68,20 @@ class TabsPage extends StatelessWidget {
                               description: '2024-09-15 重庆',
                               accent: Padding(
                                 padding: EdgeInsets.only(top: 16),
-                                child: Image.asset(
-                                  'asset/image/app-circle.png',
-                                  width: 64,
-                                  height: 64,
-                                  fit: BoxFit.cover,
-                                ),
+                                child: Avatar(name: '王萌萌', color: Colors.blueGrey,),
                               ),
-                              numbers: [Text('123'), Text('234'), Text('345')],
+                              numbers: [Tag(text: '123'), Tag(text: '234'), Tag(text: '345')],
                             ),
                             styles.buildTile(context,
                               imagePath: 'asset/image/widget-circle.png',
                               title: '页签导航',
                               subtitle: '页签导航是局部切换页面内容的常用组件。',
                               description: '2024-09-15 重庆',
-                              numbers: [Text('123'), Text('234')],
+                              numbers: [],
+                              accent: Padding(
+                                padding: EdgeInsets.only(top: 16),
+                                child: Badge(child: Avatar(),),
+                              ),
                             ),
                           ],
                         ),

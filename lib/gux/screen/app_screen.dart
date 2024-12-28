@@ -3,9 +3,7 @@ import 'package:gux/gux/page/app/open_street_map_app.dart';
 import 'package:gux/gux/page/app/zuji_football_app.dart';
 
 import '/gux/page/app/trainimation_app.dart';
-import '/styles.dart' as styles;
-
-
+import '../../design/styles.dart' as styles;
 
 class AppScreen extends StatelessWidget {
   @override
@@ -68,6 +66,5 @@ class AppScreen extends StatelessWidget {
         ),
       ],
     );
-
   }
 }

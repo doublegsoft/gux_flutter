@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import '/common/xhr.dart' as xhr;
 
-String HOST = "http://192.168.0.207:9098";
+String HOST = "http://192.168.110.207:9098";
 
 Future<List<Map<String,dynamic>>> fetchApplicationAdvertisements(Map<String,dynamic> params) async {
   Map<String,dynamic> resp = await xhr.post(

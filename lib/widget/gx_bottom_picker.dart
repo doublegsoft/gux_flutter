@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gux/design/buttons.dart';
 
-import '/styles.dart' as styles;
+import '../design/styles.dart' as styles;
 
 class GXBottomPickerOption {
 
@@ -28,7 +29,11 @@ class GXBottomPicker extends StatelessWidget {
     this.value,
     this.title,
     this.clearable,
-  });
+  }) {
+    if (options.isNotEmpty) {
+      _selected = options[0];
+    }
+  }
 
   final List<GXBottomPickerOption> options;
   final Function(GXBottomPickerOption) onSelected;
@@ -40,100 +45,92 @@ class GXBottomPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 248,
-      color: Colors.white,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            height: 48,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
+    return BottomSheet(
+      backgroundColor: Colors.transparent,
+      enableDrag: false,
+      onClosing: () {},
+      builder: (context) {
+        return Container(
+          height: 266,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                height: 48,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    if (clearable??true) GestureDetector(
-                      child: Padding(
-                        padding: EdgeInsets.only(left: styles.padding),
-                        child: Text('清除', style: TextStyle(fontSize: 16, color: styles.colorError)),
-                      ),
-                      onTap: () {
-                        onSelected(GXBottomPickerOption.NONE);
-                        Navigator.pop(context);
-                      },
+                    Row(
+                      children: [
+                        SizedBox(width: 10,),
+                        CloseIconButton(),
+                        SizedBox(width: 20,),
+                        ClearIconButton(
+                          didTap: () {
+                            if (onSelected != null) {
+                              onSelected(GXBottomPickerOption.NONE);
+                            }
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
                     ),
-                    GestureDetector(
-                      child: Padding(
-                        padding: EdgeInsets.only(left: styles.padding),
-                        child: Text('取消', style: TextStyle(fontSize: 16, color: styles.colorError)),
-                      ),
-                      onTap: () {
-                        if (value == '') {
-                          onSelected(GXBottomPickerOption.NONE);
-                        } else {
-                          onSelected(options[options.indexOf(
-                            options.firstWhere((element) => element.value == value,),
-                          )]);
+                    Spacer(),
+                    ConfirmIconButton(
+                      didTap: () {
+                        if (onSelected != null) {
+                          onSelected(_selected ?? GXBottomPickerOption.NONE);
                         }
                         Navigator.pop(context);
                       },
                     ),
+                    SizedBox(width: 10,),
                   ],
                 ),
-                Text('',
-                  style: TextStyle(fontSize: 16, color: styles.colorTextPrimary)
-                ),
-                GestureDetector(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: styles.padding),
-                    child: Text('确定', style: TextStyle(fontSize: 16, color: styles.colorPrimary)),
-                  ),
-                  onTap: () {
-                    onSelected(_selected??GXBottomPickerOption.NONE);
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            width: double.infinity,
-            height: 200,
-            child: CupertinoPicker(
-              backgroundColor: Colors.white,
-              magnification: 1.25,
-              itemExtent: 40,
-              scrollController: FixedExtentScrollController(
-                initialItem: value == '' ? 0 : options.indexOf(
-                  options.firstWhere((element) => element.value == value,),
-                ),
               ),
-              onSelectedItemChanged: (int index) {
-                // onSelected(
-                //   options[index],
-                // );
-                _selected = options[index];
-              },
-              children: options.map((option) => Center(
-                child: GestureDetector(
-                  onTap: () {
-                    onSelected(option);
-                    Navigator.pop(context, option.value);
-                  },
-                  child: Text(
-                    option.label,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: styles.colorTextPrimary,
+              SizedBox(
+                width: double.infinity,
+                height: 200,
+                child: CupertinoPicker(
+                  backgroundColor: Colors.white,
+                  magnification: 1.25,
+                  itemExtent: 40,
+                  scrollController: FixedExtentScrollController(
+                    initialItem: value == '' ? 0 : options.indexOf(
+                      options.firstWhere((element) => element.value == value,),
                     ),
                   ),
+                  onSelectedItemChanged: (int index) {
+                    _selected = options[index];
+                  },
+                  children: options.map((option) => Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        onSelected(option);
+                        Navigator.pop(context, option.value);
+                      },
+                      child: Text(
+                        option.label,
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: styles.colorTextPrimary,
+                        ),
+                      ),
+                    ),
+                  ),).toList(),
                 ),
-              ),).toList(),
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

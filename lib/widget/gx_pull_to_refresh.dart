@@ -18,7 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '/styles.dart' as styles;
+import '../design/styles.dart' as styles;
 
 class GXPullToRefresh extends StatefulWidget {
 
@@ -59,21 +59,11 @@ class GXPullToRefreshState extends State<GXPullToRefresh> with SingleTickerProvi
 
   late double _height;
 
-  late Color _backgroundColor;
-
-  late Color _foregroundColor;
-
-  late AnimationController _controller;
-
-  late Animation<double> _animation;
-
 
   @override
   void initState() {
     super.initState();
     _height = widget.height ?? 200;
-    _backgroundColor = widget.backgroundColor ?? Colors.transparent;
-    _foregroundColor = widget.foregroundColor ?? styles.colorTextPrimary;
   }
 
   @override

@@ -32,7 +32,11 @@ Color get colorPrimary {
 }
 
 Color get colorError {
-  return Color(0xffd32f2f);
+  return Color(0xffF53F3F);
+}
+
+Color get colorErrorLight {
+  return Color(0xffFFECE8);
 }
 
 Color get colorSuccess {
@@ -52,11 +56,11 @@ Color get colorWarningLight {
 }
 
 Color get colorInfo {
-  return Color(0xff4791C2);
+  return const Color(0xff4791C2);
 }
 
 Color get colorInfoLight {
-  return Color (0xffF0F6FA);
+  return const Color (0xffF0F6FA);
 }
 
 Color get colorDivider {
@@ -139,6 +143,7 @@ Widget buildCard({
 }
 
 Widget buildTile(BuildContext context, {
+  int? index,
   String? title,
   Widget? titleWidget,
   String? subtitle = "",
@@ -156,7 +161,7 @@ Widget buildTile(BuildContext context, {
   List<Widget> lines = [];
   lines.add(SizedBox(height: 0));
   if (title != null) {
-    lines.add(Text(title,
+    lines.add(Text('$index $title',
       style: TextStyle(fontSize: 18, color: colorTextPrimary),
     ),);
   } else if (titleWidget != null) {
@@ -210,11 +215,9 @@ Widget buildTile(BuildContext context, {
   List<Widget> lastNumbers = [];
   numbers!.forEach((num) {
     lastNumbers.add(
-      Expanded(
-        child: Container(
-          height: 24,
-          child: num,
-        ),
+      Container(
+        height: 32,
+        child: num,
       ),
     );
   });

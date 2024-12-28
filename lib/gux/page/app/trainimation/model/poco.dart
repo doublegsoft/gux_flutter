@@ -2,12 +2,28 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:g2d/common/move.dart';
 
 class Drill {
+
+  final double pitchWidth;
+
+  final double pitchHeight;
+
+  final double pixelWidth;
+
+  final double pixelHeight;
 
   List<dynamic> equipments = [];
 
   dynamic? selected;
+
+  Drill({
+    required this.pitchWidth,
+    required this.pitchHeight,
+    required this.pixelWidth,
+    required this.pixelHeight,
+  });
 
   void clearSelected() {
     for (dynamic el in equipments) {
@@ -31,10 +47,42 @@ class Drill {
   }
 
   Drill clone() {
-    Drill ret = Drill();
+    Drill ret = Drill(
+      pixelWidth: pixelWidth,
+      pixelHeight: pixelHeight,
+      pitchWidth: pixelWidth,
+      pitchHeight: pitchHeight,
+    );
     ret.equipments.addAll(equipments);
     return ret;
   }
+
+  ///
+  /// the duration to complete this drill
+  ///
+  Duration duration() {
+    double ret = 0;
+    equipments.forEach((equip) {
+      if (equip is Player) {
+        Player player = equip as Player;
+        player.runnings.forEach((run) {
+          double dur = calcuateDuration(
+            pixelWidth: pixelWidth,
+            pitchWidth: pitchWidth,
+            speed: player.speed,
+            start: run.start,
+            end: run.end,
+          );
+          if (ret < dur) {
+            ret = dur;
+          }
+        });
+      }
+    });
+    return Duration(milliseconds: (ret * 1000).toInt());
+  }
+
+
 }
 
 enum Equipment {
@@ -84,14 +132,14 @@ class Player {
   final Equipment type = Equipment.player;
 
   ///
-  /// start position
+  /// initial position
   ///
-  Offset? start;
+  late final Offset initial;
 
   ///
   /// present position
   ///
-  Offset position;
+  Offset present;
 
   double speed;
 
@@ -105,33 +153,42 @@ class Player {
 
   int number = 10;
 
+  int presentRunningPath = 0;
+
   ///
   /// moving path
   ///
   final List<Running> runnings = [];
 
   Player({
-    required this.position,
-    this.speed = 1.0,
-  });
+    required this.present,
+    this.speed = 5.0,
+  }) {
+    this.initial = this.present;
+  }
 
   bool contain(Offset point) {
-    if (point.dx > position.dx - size! &&
-        point.dx < position.dx + size! &&
-        point.dy > position.dy - size! &&
-        point.dy < position.dy + size!) {
+    if (point.dx > present.dx - size! &&
+        point.dx < present.dx + size! &&
+        point.dy > present.dy - size! &&
+        point.dy < present.dy + size!) {
       return true;
     }
     return false;
   }
 
   void moveTo(Offset pos) {
-    position = pos;
+    present = pos;
   }
 
   void run(Offset dest) {
-    Running run = Running(start: position, end: dest);
-    runnings.add(run);
+    if (runnings.isEmpty) {
+      Running run = Running(start: present, end: dest);
+      runnings.add(run);
+    } else {
+      Running run = Running(start: runnings[runnings.length - 1].end, end: dest);
+      runnings.add(run);
+    }
   }
 
   void dribble(Offset dest) {
@@ -144,13 +201,17 @@ class Player {
 
   Offset finish() {
     if (runnings.length == 0) {
-      return position;
+      return present;
     }
     return runnings[runnings.length - 1].end;
   }
 
+  Offset play() {
+    return initial;
+  }
+
   Player clone() {
-    Player ret = Player(position: position);
+    Player ret = Player(present: present);
     ret.number = number;
     ret.speed = speed;
     ret.foreground = foreground;

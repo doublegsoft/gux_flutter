@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:g2d_flutter/common/g2d.dart';
+import 'package:g2d/common/move.dart';
 
 import 'model/poco.dart';
 
@@ -13,14 +13,18 @@ class FutsalPitchPainter extends CustomPainter {
 
   final Drill drill;
 
-  final int elapsed;
+  final double elapsed;
 
-  FutsalPitchPainter(this.drill, this.elapsed);
+  final Function onStopAnimation;
+
+  FutsalPitchPainter({
+    required this.drill,
+    required this.elapsed,
+    required Function this.onStopAnimation,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
-    print(elapsed);
-
 
     final paint = Paint()
       ..color = Colors.white
@@ -103,20 +107,48 @@ class FutsalPitchPainter extends CustomPainter {
     return true;
   }
 
+  ///
+  /// renders a whole drill including players, equipments and lines.
+  ///
   void _renderDrill(Canvas canvas) {
     final paint = Paint()
       ..strokeWidth = 1
       ..style = PaintingStyle.fill;
+    bool done = true;
     drill.equipments.forEach((el) {
       if (el.type == Equipment.player) {
         Player player = el as Player;
         paint.color = player.selected ? player.foreground : player.background;
+        Offset startPos = player.initial;
+        Offset lastPos = player.initial;
+        print(player.presentRunningPath);
+        print('${player.runnings.length}  ${player.presentRunningPath}');
+        if (player.presentRunningPath < player.runnings.length) {
+          print('hello');
+          lastPos = player.runnings[player.presentRunningPath].end;
+        }
+        if (!isApproximatelyEquals(player.present, lastPos)) {
+          done = false;
+          player.present = movePointAlongLine(
+            start: startPos,
+            end: lastPos,
+            elapsed: elapsed,
+            speed: player.speed,
+          );
+        }
+        if (isApproximatelyEquals(player.present, lastPos)) {
+          player.presentRunningPath += 1;
+        }
+
         player.size = 15;
-        canvas.drawCircle(player.position, player.size!, paint);
+        canvas.drawCircle(player.present, player.size!, paint);
         _drawPlayerNumber(canvas, player);
         _drawPlayerRunning(canvas, player);
       }
     });
+    if (done) {
+      onStopAnimation();
+    }
   }
 
   void _drawPlayerNumber(Canvas canvas, Player player) {
@@ -139,7 +171,7 @@ class FutsalPitchPainter extends CustomPainter {
     );
     double w = textPainter.width;
 
-    final offset = Offset(player.position.dx - w / 2, player.position.dy - fontSize / 2 - 1);
+    final offset = Offset(player.present.dx - w / 2, player.present.dy - fontSize / 2 - 1);
     textPainter.paint(canvas, offset);
   }
 
@@ -149,9 +181,9 @@ class FutsalPitchPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
     player.runnings.forEach((run) {
       Player dummy = player.clone();
-      dummy.position = run.end;
+      dummy.present = run.end;
       paint.color = player.background.withOpacity(0.5);
-      canvas.drawCircle(dummy.position, dummy.size!, paint);
+      canvas.drawCircle(dummy.present, dummy.size!, paint);
       _drawPlayerNumber(canvas, dummy);
     });
   }

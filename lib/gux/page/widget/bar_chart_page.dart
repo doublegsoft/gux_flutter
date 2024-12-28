@@ -22,7 +22,7 @@ import 'package:gux/widget/gx_grid_view.dart';
 import 'package:gux/widget/gx_widget_size.dart';
 import 'package:gux/widget/gx_list_view.dart';
 
-import "/styles.dart" as styles;
+import "../../../design/styles.dart" as styles;
 
 class BarChartPage extends StatefulWidget {
   @override

@@ -1,4 +1,4 @@
-package com.example.gux_flutter
+package ui.doublegsoft.gux
 
 import io.flutter.embedding.android.FlutterActivity
 

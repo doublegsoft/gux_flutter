@@ -14,14 +14,42 @@
 ** ──────────────────────────────────────────────────
 */
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:gux/gux/bloc/form_bloc.dart';
+import 'package:gux/gux/bloc/list_bloc.dart';
+import 'package:gux/provider/schedule_provider.dart';
+import 'package:gux/widget/gx_page_visibility_mixin.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:provider/provider.dart';
 
 import '/welcome.dart';
 import 'gux/screen/app_screen.dart';
 import 'gux/screen/page_screen.dart';
 import 'gux/screen/widget_screen.dart';
 
-import 'package:gux/styles.dart' as styles;
+import 'package:gux/design/styles.dart' as styles;
+
+class CustomAnimation extends EasyLoadingAnimation {
+
+  CustomAnimation();
+
+  @override
+  Widget buildWidget(
+      Widget child,
+      AnimationController controller,
+      AlignmentGeometry alignment,
+      ) {
+    return Opacity(
+      opacity: controller.value,
+      child: RotationTransition(
+        turns: controller,
+        child: child,
+      ),
+    );
+  }
+}
 
 void main() {
   initializeDateFormatting().then((_) => runApp(GUX()));
@@ -37,15 +65,58 @@ class GUX extends StatefulWidget {
 class GUXState extends State<GUX> with WidgetsBindingObserver {
 
   @override
+  void initState() {
+    super.initState();
+    EasyLoading.instance
+      ..displayDuration = const Duration(milliseconds: 2000)
+      ..indicatorType = EasyLoadingIndicatorType.fadingCircle
+      ..loadingStyle = EasyLoadingStyle.dark
+      ..indicatorSize = 45.0
+      ..radius = 10.0
+      ..progressColor = Colors.yellow
+      ..backgroundColor = Colors.green
+      ..indicatorColor = Colors.yellow
+      ..textColor = Colors.yellow
+      ..maskColor = Colors.blue.withOpacity(0.5)
+      ..userInteractions = true
+      ..dismissOnTap = false
+      ..customAnimation = CustomAnimation();
+  }
+
+  @override
   Widget build(BuildContext context) {
     styles.init(context);
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      // home: WelcomeScreen(),
-      routes: {
-        '/': (conetxt) => WelcomePage(),
-        '/main': (context) => MainPage(),
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<FormBloc>(
+          create: (context) => FormBloc(),
+        ),
+        BlocProvider<ListBloc>(
+          create: (context) => ListBloc(),
+        ),
+        ChangeNotifierProvider(create: (_) => ScheduleProvider()),
+      ],
+      child: MaterialApp(
+        navigatorObservers: [],
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          useMaterial3: false,
+        ),
+        // home: WelcomeScreen(),
+        routes: {
+          '/': (conetxt) => WelcomePage(),
+          '/main': (context) => MainPage(),
+        },
+        supportedLocales: const [
+          Locale('zh', 'CN'), // 中文
+        ],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        builder: EasyLoading.init(),
+      ),
     );
   }
 
@@ -101,22 +172,22 @@ class MainPageState extends State<MainPage> {
               _currentPageIndex = index;
             });
           },
-          indicatorColor: Colors.amber,
+          indicatorColor: styles.colorPrimary,
           selectedIndex: _currentPageIndex,
-          destinations: const <Widget>[
+          destinations: <Widget>[
             NavigationDestination(
-              selectedIcon: Icon(Icons.home),
-              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home, color: styles.colorTextInverse),
+              icon: Icon(Icons.home_outlined, color: styles.colorTextPrimary,),
               label: '组件',
             ),
             NavigationDestination(
-              selectedIcon: Icon(Icons.find_in_page),
-              icon: Icon(Icons.find_in_page_outlined),
+              selectedIcon: Icon(Icons.find_in_page, color: styles.colorTextInverse),
+              icon: Icon(Icons.find_in_page_outlined, color: styles.colorTextPrimary),
               label: '页面',
             ),
             NavigationDestination(
-              selectedIcon: Icon(Icons.touch_app),
-              icon: Icon(Icons.touch_app_outlined),
+              selectedIcon: Icon(Icons.touch_app, color: styles.colorTextInverse),
+              icon: Icon(Icons.touch_app_outlined, color: styles.colorTextPrimary),
               label: '应用',
             ),
           ],
@@ -125,4 +196,5 @@ class MainPageState extends State<MainPage> {
       ),
     );
   }
+
 }

@@ -14,9 +14,13 @@
 ** ──────────────────────────────────────────────────
 */
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:gux/gux/bloc/form_bloc.dart';
 import 'package:gux/widget/gx_two_column_form.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
-import '/styles.dart' as styles;
+import '../../../design/styles.dart' as styles;
 
 class TwoColumnFormPage extends StatefulWidget {
   @override
@@ -26,25 +30,70 @@ class TwoColumnFormPage extends StatefulWidget {
 class TwoColumnFormPageState extends State<TwoColumnFormPage> {
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('编辑表单'),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          color: Colors.white,
-          padding: EdgeInsets.all(styles.padding),
-          child: GXTwoColumnForm(
-            fields: getFields(),
-          ),
-        ),
-      )
-
+      body: BlocConsumer<FormBloc, FormWhichState>(
+        builder: (context, state) {
+          if (state is FormLoadingState) {
+            return Skeletonizer(
+              enabled: true,
+              child: GXTwoColumnForm(
+                fields: getFields({}),
+              ),
+            );
+          } else if (state is FormUpdatingState) {
+            EasyLoading.showInfo('数据保存中....');
+          } else if (state is FormSavedState) {
+            // Future.delayed(Duration(seconds: 1), () {
+            //   Navigator.of(context).pop();
+            // });
+            // return Center(child: Text('内容已保存！'),);
+            EasyLoading.showSuccess('数据保存成功');
+            /// 恢复初始状态
+            context.read<FormBloc>().add(FormInitEvent());
+          }
+          return SingleChildScrollView(
+            child: Container(
+              color: Colors.white,
+              padding: EdgeInsets.all(styles.padding),
+              child: Column(
+                children: [
+                  GXTwoColumnForm(
+                    fields: getFields(state.data),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      context.read<FormBloc>().add(FormSaveEvent());
+                    },
+                    child: Text('保存'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+        listener: (context, state) {
+          // print('listening: ${state.status}');
+        },)
     );
   }
 
-  List<Map<String, dynamic>> getFields() {
+  List<Map<String, dynamic>> getFields(Map? data) {
+    if (data == null) {
+      data = {};
+    }
     List<Map<String, dynamic>> ret = [];
     Map<String,dynamic> field = {};
 
@@ -61,6 +110,7 @@ class TwoColumnFormPageState extends State<TwoColumnFormPage> {
     field["title"] = "姓名";
     field["name"] = "name";
     field["input"] = "text";
+    field['value'] = data['name']??'';
     ret.add(field);
 
     field = {};
@@ -94,6 +144,7 @@ class TwoColumnFormPageState extends State<TwoColumnFormPage> {
     field["input"] = "ruler";
     field["range"] = [100, 260];
     field["unit"] = "cm";
+    field['value'] = data['height']??double.infinity;
     ret.add(field);
 
     field = {};

@@ -10,7 +10,7 @@ import 'package:gux/widget/gx_bottom_picker.dart';
 import '/gux/page/app/trainimation/futsal_pitch_painter.dart';
 import '/gux/page/app/trainimation/soccer_pitch_painter.dart';
 
-import '/styles.dart' as styles;
+import '../../../design/styles.dart' as styles;
 
 class TrainimationApp extends StatefulWidget {
 
@@ -33,7 +33,7 @@ class TrainimationAppState extends State<TrainimationApp> with SingleTickerProvi
 
   dynamic? _selectedEquipmentInPitch = null;
 
-  final Drill _drill = Drill();
+  late Drill _drill;
 
   late AnimationController _animationController;
 
@@ -45,9 +45,15 @@ class TrainimationAppState extends State<TrainimationApp> with SingleTickerProvi
 
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(
-        seconds: 1000,
-      ),
+    );
+
+    double pixelWidth = styles.screenWidth;
+    double pixelHeight = pixelWidth * 40 / 22;
+    _drill = Drill(
+      pitchWidth: 22,
+      pitchHeight: 40,
+      pixelWidth: pixelWidth,
+      pixelHeight: pixelHeight,
     );
   }
 
@@ -170,7 +176,7 @@ class TrainimationAppState extends State<TrainimationApp> with SingleTickerProvi
       return;
     }
     if (_selectedEquipment == Equipment.player) {
-      _drill.equipments.add(Player(position: position));
+      _drill.equipments.add(Player(present: position));
     } else if (_selectedEquipment == Equipment.football) {
 
     }
@@ -189,11 +195,17 @@ class TrainimationAppState extends State<TrainimationApp> with SingleTickerProvi
   }
 
   CustomPaint _buildFutsalPitch() {
-    double pitchWidth = MediaQuery.of(context).size.width;
-    double pitchHeight = pitchWidth * 40 / 22;
+    double pixelWidth = MediaQuery.of(context).size.width;
+    double pixelHeight = pixelWidth * 40 / 22;
     return CustomPaint(
-      size: Size(pitchWidth, pitchHeight),
-      painter: FutsalPitchPainter(_drill.clone(), _animation == null ? 0 : _animation!.value),
+      size: Size(pixelWidth, pixelHeight),
+      painter: FutsalPitchPainter(
+        drill: _drill,
+        elapsed: (_animation == null ? 0 : _animation!.value).toDouble(),
+        onStopAnimation: () {
+          _animationController.stop();
+        },
+      ),
     );
   }
 
@@ -368,24 +380,20 @@ class TrainimationAppState extends State<TrainimationApp> with SingleTickerProvi
       setState(() {});
     });
     if (_playing) {
-      _animation = StepTween(begin: 0, end: 1000).animate(_animationController);
+      _animationController.duration = _drill.duration();
+      print(_animationController.duration);
+      _animation = StepTween(begin: 0, end: 10 * _animationController.duration!.inMilliseconds!).animate(_animationController);
       _animationController.forward();
     } else {
+      _drill.equipments.forEach((equip) {
+        if (equip is Player) {
+          Player player = equip as Player;
+          player.present = player.initial;
+        }
+      });
+      _animationController.reset();
       _animationController.stop();
     }
-
-    // _drill.equipments.forEach((equip) {
-    //   if (equip is Player) {
-    //     Player player = equip as Player;
-    //     player.start = player.position;
-    //     while (player.position != player.finish()) {
-    //       Future.delayed(Duration(milliseconds: 100), () {
-    //         player.position = player.position + Offset(1,1);
-    //         setState(() {});
-    //       });
-    //     }
-    //   }
-    // });
   }
 }
 

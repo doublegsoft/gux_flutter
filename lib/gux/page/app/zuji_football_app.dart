@@ -4,7 +4,7 @@ import 'package:gux/gux/page/app/zuji/training/training_plan_summary.dart';
 import 'package:gux/widget/gx_sliver_appbard_delegate.dart';
 import '/widget/gx_tab_item.dart';
 
-import '/styles.dart' as styles;
+import '../../../design/styles.dart' as styles;
 
 
 

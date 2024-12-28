@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 
-import '/styles.dart' as styles;
+import '../../../design/styles.dart' as styles;
 
 class OpenStreetMapApp extends StatefulWidget {
 

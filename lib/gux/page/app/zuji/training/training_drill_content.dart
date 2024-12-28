@@ -7,7 +7,7 @@ import 'training_drill_diagram.dart';
 import 'training_drill_intensity.dart';
 import 'training_drill_target.dart';
 
-import '/styles.dart' as styles;
+import '../../../../../design/styles.dart' as styles;
 
 class TrainingDrillContent extends StatefulWidget {
 
